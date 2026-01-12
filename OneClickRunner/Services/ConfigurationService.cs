@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Xml.Serialization;
 using OneClickRunner.Models;
 
 namespace OneClickRunner.Services;
@@ -11,7 +12,7 @@ namespace OneClickRunner.Services;
 /// </summary>
 public class ConfigurationService
 {
-    private readonly string _configPath;
+    private readonly string _scenariosPath;
     private List<AppItem> _appItems;
 
     public ConfigurationService()
@@ -19,7 +20,8 @@ public class ConfigurationService
         var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         var appFolder = Path.Combine(appDataPath, "OneClickRunner");
         Directory.CreateDirectory(appFolder);
-        _configPath = Path.Combine(appFolder, "config.json");
+        _scenariosPath = Path.Combine(appFolder, "Scenarios");
+        Directory.CreateDirectory(_scenariosPath);
         _appItems = new List<AppItem>();
         LoadConfiguration();
     }
@@ -31,8 +33,12 @@ public class ConfigurationService
 
     public void AddItem(AppItem item)
     {
+        if (string.IsNullOrEmpty(item.Filename))
+        {
+            item.Filename = $"{item.Id}.xml";
+        }
         _appItems.Add(item);
-        SaveConfiguration();
+        SaveItem(item);
     }
 
     public void UpdateItem(AppItem item)
@@ -41,44 +47,71 @@ public class ConfigurationService
         if (index >= 0)
         {
             _appItems[index] = item;
-            SaveConfiguration();
+            SaveItem(item);
         }
     }
 
     public void RemoveItem(Guid id)
     {
-        _appItems.RemoveAll(i => i.Id == id);
-        SaveConfiguration();
+        var item = _appItems.Find(i => i.Id == id);
+        if (item != null)
+        {
+            File.Delete(Path.Combine(_scenariosPath, item.Filename));
+            _appItems.Remove(item);
+        }
     }
 
     private void LoadConfiguration()
     {
-        try
+        _appItems.Clear();
+        var xmlFiles = Directory.GetFiles(_scenariosPath, "*.xml");
+        foreach (var file in xmlFiles)
         {
-            if (File.Exists(_configPath))
+            try
             {
-                var json = File.ReadAllText(_configPath);
-                _appItems = JsonSerializer.Deserialize<List<AppItem>>(json) ?? new List<AppItem>();
+                var serializer = new XmlSerializer(typeof(AppItem));
+                using var stream = File.OpenRead(file);
+                var item = (AppItem?)serializer.Deserialize(stream);
+                if (item != null)
+                {
+                    item.Filename = Path.GetFileName(file);
+                    _appItems.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading {file}: {ex.Message}");
             }
         }
-        catch (Exception ex)
+
+        // Add default calculator scenario if no items exist
+        if (_appItems.Count == 0)
         {
-            // Log error or handle it appropriately
-            System.Diagnostics.Debug.WriteLine($"Error loading configuration: {ex.Message}");
+            var calc = new AppItem
+            {
+                Name = "Calculator",
+                Path = "calc.exe",
+                Arguments = "",
+                WorkingDirectory = "",
+                Filename = "run_windows_calculator.xml"
+            };
+            _appItems.Add(calc);
+            SaveItem(calc);
         }
     }
 
-    private void SaveConfiguration()
+    private void SaveItem(AppItem item)
     {
         try
         {
-            var json = JsonSerializer.Serialize(_appItems, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(_configPath, json);
+            var path = Path.Combine(_scenariosPath, item.Filename);
+            var serializer = new XmlSerializer(typeof(AppItem));
+            using var stream = File.Create(path);
+            serializer.Serialize(stream, item);
         }
         catch (Exception ex)
         {
-            // Log error or handle it appropriately
-            System.Diagnostics.Debug.WriteLine($"Error saving configuration: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error saving {item.Filename}: {ex.Message}");
         }
     }
 }

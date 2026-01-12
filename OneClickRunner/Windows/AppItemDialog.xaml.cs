@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using OneClickRunner.Models;
 
@@ -29,10 +30,14 @@ public partial class AppItemDialog : Window
 
     private void BrowseButton_Click(object sender, RoutedEventArgs e)
     {
+        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        var scenariosPath = Path.Combine(appDataPath, "OneClickRunner", "Scenarios");
+
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
-            Filter = "Executable Files (*.exe)|*.exe|Batch Files (*.bat;*.cmd)|*.bat;*.cmd|PowerShell Scripts (*.ps1)|*.ps1|All Files (*.*)|*.*",
-            Title = "Select Application or Script"
+            Filter = "Applications and Scripts (*.exe;*.bat;*.cmd;*.ps1;*.py;*.vbs;*.sh)|*.exe;*.bat;*.cmd;*.ps1;*.py;*.vbs;*.sh|Executable Files (*.exe)|*.exe|Batch Files (*.bat;*.cmd)|*.bat;*.cmd|PowerShell Scripts (*.ps1)|*.ps1|Python Scripts (*.py)|*.py|VBScript Files (*.vbs)|*.vbs|Shell Scripts (*.sh)|*.sh|All Files (*.*)|*.*",
+            Title = "Select Application or Script",
+            InitialDirectory = scenariosPath
         };
 
         if (dialog.ShowDialog() == true)
