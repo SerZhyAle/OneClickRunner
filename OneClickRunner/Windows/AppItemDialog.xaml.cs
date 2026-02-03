@@ -19,6 +19,7 @@ public partial class AppItemDialog : Window
             PathTextBox.Text = existingItem.Path;
             ArgumentsTextBox.Text = existingItem.Arguments;
             WorkingDirectoryTextBox.Text = existingItem.WorkingDirectory;
+            RunAsAdminCheckBox.IsChecked = existingItem.RunAsAdmin;
             Title = "Edit Application";
         }
         else
@@ -79,6 +80,7 @@ public partial class AppItemDialog : Window
             AppItem.Path = PathTextBox.Text.Trim();
             AppItem.Arguments = ArgumentsTextBox.Text.Trim();
             AppItem.WorkingDirectory = WorkingDirectoryTextBox.Text.Trim();
+            AppItem.RunAsAdmin = RunAsAdminCheckBox.IsChecked ?? false;
         }
 
         DialogResult = true;

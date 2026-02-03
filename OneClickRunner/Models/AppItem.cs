@@ -13,4 +13,5 @@ public class AppItem
     public string Arguments { get; set; } = string.Empty;
     public string WorkingDirectory { get; set; } = string.Empty;
     public string Filename { get; set; } = string.Empty;
+    public bool RunAsAdmin { get; set; } = false;
 }

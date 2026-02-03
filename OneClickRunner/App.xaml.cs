@@ -69,6 +69,40 @@ public partial class App : Application
                     
                     try
                     {
+                        // Special handling for yt-dlp command
+                        if (item.Path == "SPECIAL_YTDLP")
+                        {
+                            LoggingService.Log("Special yt-dlp command detected, showing link input dialog");
+                            
+                            // Show dialog on UI thread
+                            Current.Dispatcher.Invoke(() =>
+                            {
+                                var dialog = new OneClickRunner.Windows.LinkInputDialog();
+                                if (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.Link))
+                                {
+                                    var downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+                                    var command = $"cd /d \"{downloadsPath}\" && yt-dlp {dialog.Link}";
+                                    
+                                    var startInfo = new System.Diagnostics.ProcessStartInfo
+                                    {
+                                        FileName = "cmd.exe",
+                                        Arguments = $"/k \"{command}\"",
+                                        UseShellExecute = true,
+                                        Verb = "" // No admin required
+                                    };
+                                    
+                                    LoggingService.Log($"Starting yt-dlp with link: {dialog.Link}");
+                                    var process = System.Diagnostics.Process.Start(startInfo);
+                                    LoggingService.Log($"yt-dlp process started with ID: {process?.Id}");
+                                }
+                                else
+                                {
+                                    LoggingService.Log("yt-dlp command canceled by user");
+                                }
+                            });
+                            return;
+                        }
+                        
                         var startInfo = new System.Diagnostics.ProcessStartInfo
                         {
                             FileName = item.Path,

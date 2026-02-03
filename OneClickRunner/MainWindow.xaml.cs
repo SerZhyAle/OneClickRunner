@@ -123,6 +123,12 @@ public partial class MainWindow : Window
                     Arguments = selectedItem.Arguments,
                     UseShellExecute = true
                 };
+
+                if (selectedItem.RunAsAdmin)
+                {
+                    startInfo.Verb = "runas";
+                }
+
                 if (!string.IsNullOrWhiteSpace(selectedItem.WorkingDirectory))
                 {
                     startInfo.WorkingDirectory = selectedItem.WorkingDirectory;
@@ -154,7 +160,8 @@ public partial class MainWindow : Window
                 Name = selectedItem.Name,
                 Path = selectedItem.Path,
                 Arguments = selectedItem.Arguments,
-                WorkingDirectory = selectedItem.WorkingDirectory
+                WorkingDirectory = selectedItem.WorkingDirectory,
+                RunAsAdmin = selectedItem.RunAsAdmin
             };
 
             var dialog = new AppItemDialog(itemToEdit);
@@ -261,6 +268,12 @@ public partial class MainWindow : Window
             LoggingService.Log($"StackTrace: {ex.StackTrace}");
             System.Windows.MessageBox.Show($"Error during exit: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    private void ApplyAndHideButton_Click(object sender, RoutedEventArgs e)
+    {
+        LoggingService.Log("Apply and Hide button clicked");
+        Close();
     }
 
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
