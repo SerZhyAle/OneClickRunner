@@ -31,6 +31,11 @@ public class ConfigurationService
         return new List<AppItem>(_appItems);
     }
 
+    public void Reload()
+    {
+        LoadConfiguration();
+    }
+
     public void AddItem(AppItem item)
     {
         if (string.IsNullOrEmpty(item.Filename))

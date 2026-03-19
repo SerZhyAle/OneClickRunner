@@ -161,7 +161,8 @@ public partial class MainWindow : Window
                 Path = selectedItem.Path,
                 Arguments = selectedItem.Arguments,
                 WorkingDirectory = selectedItem.WorkingDirectory,
-                RunAsAdmin = selectedItem.RunAsAdmin
+                RunAsAdmin = selectedItem.RunAsAdmin,
+                Filename = selectedItem.Filename
             };
 
             var dialog = new AppItemDialog(itemToEdit);

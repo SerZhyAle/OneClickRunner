@@ -57,6 +57,7 @@ public partial class App : Application
             if (Guid.TryParse(idString, out var id))
             {
                 LoggingService.Log($"Parsed GUID: {id}");
+                _configService.Reload();
                 var items = _configService.GetAllItems();
                 LoggingService.Log($"Total items: {items.Count}");
                 
@@ -319,6 +320,7 @@ public partial class App : Application
         try
         {
             LoggingService.Log("Building jump list");
+            _configService?.Reload();
             var jumpList = new JumpList();
             jumpList.ShowFrequentCategory = false;
             jumpList.ShowRecentCategory = false;
