@@ -4,54 +4,115 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OneClickRunner"
+        xmlns:conv="clr-namespace:OneClickRunner.Converters"
         mc:Ignorable="d"
         Title="OneClickRunner Settings" Height="500" Width="700"
         Icon="Assets/app.ico"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Foreground="{DynamicResource ForegroundBrush}"
         Closing="Window_Closing">
+    <Window.Resources>
+        <conv:PathToIconConverter x:Key="PathToIconConverter"/>
+    </Window.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Margin="0,0,0,10">
             <TextBlock Name="VersionText" DockPanel.Dock="Right" VerticalAlignment="Center"
-                       FontSize="11" Foreground="Gray"/>
-            <TextBlock Text="Applications and Scripts" FontSize="16" FontWeight="Bold"/>
+                       FontSize="11" Foreground="{DynamicResource SubtleForegroundBrush}"/>
+            <TextBlock Text="Applications and Scripts" DockPanel.Dock="Left" FontSize="16" FontWeight="Bold"
+                       VerticalAlignment="Center" Foreground="{DynamicResource ForegroundBrush}"/>
+            <TextBlock Text="Search:" DockPanel.Dock="Left" Margin="16,0,6,0" VerticalAlignment="Center"
+                       Foreground="{DynamicResource ForegroundBrush}"/>
+            <TextBox Name="SearchBox" VerticalAlignment="Center" Height="24" VerticalContentAlignment="Center"
+                     TextChanged="SearchBox_TextChanged" ToolTip="Filter scenarios by name or path"/>
         </DockPanel>
 
-        <ListView Name="AppListView" Grid.Row="1" SelectionMode="Single" MouseDoubleClick="AppListView_MouseDoubleClick">
+        <ListView Name="AppListView" Grid.Row="1" SelectionMode="Single"
+                  MouseDoubleClick="AppListView_MouseDoubleClick" KeyDown="AppListView_KeyDown">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <!-- Select the row under the cursor before the context menu opens. -->
+                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="ListViewItem_PreviewMouseRightButtonDown"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Run" Click="RunButton_Click"/>
+                    <MenuItem Header="Edit" Click="EditButton_Click"/>
+                    <MenuItem Header="Clone" Click="CloneButton_Click"/>
+                    <MenuItem Header="Export" Click="ExportButton_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Remove" Click="RemoveButton_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
-                    <GridViewColumn Header="Path" Width="350" DisplayMemberBinding="{Binding Path}"/>
-                    <GridViewColumn Header="Arguments" Width="120" DisplayMemberBinding="{Binding Arguments}"/>
+                    <GridViewColumn Header="Name" Width="180">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
+                                           Source="{Binding Path, Converter={StaticResource PathToIconConverter}}"/>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Path" Width="250" DisplayMemberBinding="{Binding Path}"/>
+                    <GridViewColumn Header="Arguments" Width="90" DisplayMemberBinding="{Binding Arguments}"/>
+                    <GridViewColumn Header="Admin" Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock HorizontalAlignment="Center" ToolTip="Runs as Administrator">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value=""/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RunAsAdmin}" Value="True">
+                                                    <Setter Property="Text" Value="🛡"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Working Dir" Width="150" DisplayMemberBinding="{Binding WorkingDirectory}"/>
                 </GridView>
             </ListView.View>
         </ListView>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,10">
-            <Button Name="AddButton" Content="Add" Width="80" Margin="0,0,10,0" Click="AddButton_Click"/>
-            <Button Name="ImportButton" Content="Import" Width="80" Margin="0,0,10,0" Click="ImportButton_Click"/>
-            <Button Name="RunButton" Content="Run" Width="80" Margin="0,0,10,0" Click="RunButton_Click"/>
-            <Button Name="EditButton" Content="Edit" Width="80" Margin="0,0,10,0" Click="EditButton_Click"/>
-            <Button Name="CloneButton" Content="Clone" Width="80" Margin="0,0,10,0" Click="CloneButton_Click"/>
-            <Button Name="RemoveButton" Content="Remove" Width="80" Click="RemoveButton_Click"/>
+        <WrapPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,4">
+            <Button Name="AddButton" Content="Add" Width="80" Margin="0,0,8,6" Click="AddButton_Click"/>
+            <Button Name="ImportButton" Content="Import" Width="80" Margin="0,0,8,6" Click="ImportButton_Click"/>
+            <Button Name="ExportButton" Content="Export" Width="80" Margin="0,0,8,6" Click="ExportButton_Click"/>
+            <Button Name="RunButton" Content="Run" Width="80" Margin="0,0,8,6" Click="RunButton_Click"/>
+            <Button Name="EditButton" Content="Edit" Width="80" Margin="0,0,8,6" Click="EditButton_Click"/>
+            <Button Name="CloneButton" Content="Clone" Width="80" Margin="0,0,8,6" Click="CloneButton_Click"/>
+            <Button Name="RemoveButton" Content="Remove" Width="80" Margin="0,0,8,6" Click="RemoveButton_Click"/>
+            <Button Name="MoveUpButton" Content="↑" Width="34" Margin="0,0,4,6" ToolTip="Move up" Click="MoveUpButton_Click"/>
+            <Button Name="MoveDownButton" Content="↓" Width="34" Margin="0,0,8,6" ToolTip="Move down" Click="MoveDownButton_Click"/>
+        </WrapPanel>
+
+        <StackPanel Grid.Row="3" Margin="0,4,0,0">
+            <CheckBox Name="AutostartCheckBox" Content="Start OneClickRunner when Windows starts"
+                      Checked="AutostartCheckBox_Changed" Unchecked="AutostartCheckBox_Changed"/>
+            <TextBlock Text="The application will run minimized."
+                       Margin="20,4,0,0" FontSize="11" Foreground="{DynamicResource SubtleForegroundBrush}"/>
         </StackPanel>
 
-        <GroupBox Header="Autostart Settings" Grid.Row="3" Padding="10">
-            <StackPanel>
-                <CheckBox Name="AutostartCheckBox" Content="Start OneClickRunner when Windows starts" 
-                          Checked="AutostartCheckBox_Changed" Unchecked="AutostartCheckBox_Changed"/>
-                <TextBlock Text="The application will run minimized." 
-                           Margin="20,5,0,0" FontSize="11" Foreground="Gray"/>
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <Button Name="ApplyAndHideButton" Content="Apply and hide this" Width="150" Margin="0,0,10,0" Click="ApplyAndHideButton_Click"/>
-                    <Button Name="ExitButton" Content="Exit Application" Width="120" Click="ExitButton_Click"/>
-                </StackPanel>
-            </StackPanel>
-        </GroupBox>
+        <!-- Window-level actions, not autostart - kept outside the group. -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Name="ApplyAndHideButton" Content="Apply and hide this" Width="150" Margin="0,0,10,0" Click="ApplyAndHideButton_Click"/>
+            <Button Name="ExitButton" Content="Exit Application" Width="120" Click="ExitButton_Click"/>
+        </StackPanel>
     </Grid>
 </Window>

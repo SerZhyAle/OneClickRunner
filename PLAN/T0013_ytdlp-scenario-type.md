@@ -2,7 +2,7 @@
 
 **Ticket:** T0013
 **Proposal:** B4
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 50
 **Date:** 2026-07-11
 **Tier:** Moderate
@@ -64,4 +64,22 @@ keep magic paths. Why: discoverable, extensible, removes string-matching in the 
 4. A pre-existing `SPECIAL_YTDLP` scenario still works after upgrade.
 
 ## 12. Next step
-`/spec-tech T0013`.
+Done.
+
+**Result (2026-07-11):** Implemented. `AppItem` gained `Type` (`ScenarioType` enum, default
+`Executable`) plus `YtDlpOutputFolder` and `YtDlpFormat`. The Add/Edit dialog has a **Scenario type**
+selector that toggles between the executable fields and yt-dlp option fields (download folder w/ Browse,
+extra options), on the T0012 layout. `ScenarioLauncher` dispatches on type through the shared launch
+path, using the T0003 safe invocation; **yt-dlp discovery** = PATH, with a clear error when absent
+(done-criteria 3). **Option scope decision (open questions):** output folder + a free-form extra-options
+box (keeps it simple, still flexible). Legacy `SPECIAL_YTDLP` scenarios keep working (launcher checks the
+sentinel) and are surfaced as the yt-dlp type on load, so editing them is natural (done-criteria 4).
+Release build: 0 errors.
+
+**Review follow-up (2026-07-11, high-severity fix):** The adversarial review found that `Edit` and
+`Clone` in `MainWindow` copied only the original `AppItem` fields, dropping the new `Type`,
+`YtDlpOutputFolder`, `YtDlpFormat` (and `Order`, from T0005). Editing or cloning a yt-dlp scenario
+therefore reopened it as an Executable and, on save, permanently converted it to a broken `yt-dlp`
+executable launch (the load-time rescue only matches the legacy `SPECIAL_YTDLP` sentinel, not the new
+`Path="yt-dlp"`). Fixed by adding `AppItem.Clone()` (copies every field) and using it in both
+`EditButton_Click` and `CloneButton_Click`. Release build: 0 errors.

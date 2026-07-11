@@ -16,18 +16,26 @@ Part of the **[SZA](https://sza.od.ua)** family of tools — see also
 
 ## Features
 
-- **Taskbar Jump List launcher**: right-click the OneClickRunner taskbar icon to run any
-  configured scenario, or open Settings / Exit.
-- **Settings window**: add, import, edit, clone, and remove scenarios.
+- **Two launch surfaces**: a taskbar **Jump List** (right-click the taskbar icon) and a
+  **system tray icon** (right-click to run a scenario, double-click to open Settings). Both list
+  the same scenarios in the same order.
+- **Settings window**: add, import, export, edit, clone, remove, reorder (↑/↓), and search/filter
+  scenarios. Right-click a row for a context menu; Enter runs, F2 edits, Del removes.
 - **Flexible execution**: run any executable, batch, PowerShell, Python, or VBScript file,
   with optional arguments and working directory.
-- **Per-scenario admin**: mark a scenario to run elevated.
+- **yt-dlp scenario type**: a first-class download scenario (pick an output folder and options;
+  you are prompted for the link at run time) - no magic paths.
+- **Per-scenario admin**: mark a scenario to run elevated. Elevation is decided **only** by that
+  flag, the same way from every launch surface (no surprise UAC prompts).
+- **Failure notice**: a Jump List launch that fails shows a brief on-screen notification.
+- **Light/dark theme**: follows the Windows apps theme and updates when you switch it.
 - **Windows autostart**: optionally start with Windows (runs minimized).
 
 ## How it works
 
-- **The launcher UI is the Jump List**, not a system tray. Each scenario becomes a task on
-  the taskbar Jump List (right-click the taskbar icon). Clicking a task launches that scenario.
+- **The launcher UI is the Jump List and the tray icon** (the tray is the persistent home).
+  Each scenario becomes a Jump List task and a tray-menu entry; activating one launches that
+  scenario. Settings and Exit are offered on both.
 - **Single instance**: one running instance handles everything; launching a Jump List task
   forwards the command to it over a named pipe.
 
@@ -52,10 +60,13 @@ scenario). Add your own scenarios, then find them on the taskbar Jump List.
 
 ### Manage scenarios
 
-- **Add** - create a scenario (Name, Path, optional Arguments / Working Directory, Run as Admin).
-- **Import** - bring a scenario in from an `.xml` file.
-- **Run** - launch the selected scenario (or double-click it).
-- **Edit / Clone / Remove** - modify, duplicate, or delete the selected scenario.
+- **Add** - create a scenario. Choose the type (executable/script, or yt-dlp download); for an
+  executable set Name, Path, optional Arguments / Working Directory, and Run as Admin.
+- **Import / Export** - bring a scenario in from, or save one out to, an `.xml` file.
+- **Run** - launch the selected scenario (double-click, the Run button, Enter, or the context menu).
+- **Edit / Clone / Remove** - modify, duplicate, or delete the selected scenario (F2 / Del work too).
+- **Reorder** - the ↑ / ↓ buttons move the selected scenario; the order drives the Jump List and tray.
+- **Search** - filter the list by name or path as you type.
 
 Autostart is toggled in the Settings window ("Start OneClickRunner when Windows starts").
 

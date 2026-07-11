@@ -2,7 +2,7 @@
 
 **Ticket:** T0014
 **Proposal:** D2
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 45
 **Date:** 2026-07-11
 **Tier:** Moderate
@@ -54,4 +54,12 @@ new class focused and under the size budget.
 3. No file introduced exceeds the ~500-line budget.
 
 ## 12. Next step
-`/spec-tech T0014`.
+Done.
+
+**Result (2026-07-11):** Implemented. `App.xaml.cs` dropped from ~376 to ~230 lines and is now a thin
+orchestrator (single-instance startup + command routing). The three pillars were extracted:
+`Services/JumpListService` (build/apply), `Services/PipeIpcService` (resilient listen + `TrySend`
+client), and `Services/ScenarioLauncher` (already extracted in T0001). Sequencing per the risk note:
+T0001/T0002 landed first, so this pass moved their now-stable bodies into services rather than
+reworking them. Behaviour is unchanged (startup, Jump List launching, `/settings`, `/exit` all route
+as before). No file exceeds the ~500-line budget. Release build: 0 errors, 0 warnings.

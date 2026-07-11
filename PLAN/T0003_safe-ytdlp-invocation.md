@@ -2,7 +2,7 @@
 
 **Ticket:** T0003
 **Proposal:** C3
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 80
 **Date:** 2026-07-11
 **Tier:** Easy
@@ -48,4 +48,12 @@ untrusted link through `cmd`'s parser.
 2. A normal link still downloads into the Downloads folder.
 
 ## 12. Next step
-`/spec-tech T0003`.
+Done; extended by the first-class type T0013.
+
+**Result (2026-07-11):** Implemented in `ScenarioLauncher.LaunchYtDlp`. The raw link is never placed
+on a command line: it is passed to `cmd` via the `OCR_YTDLP_LINK` environment variable and referenced
+as `"%OCR_YTDLP_LINK%"`, so `&`, `|`, `<`, `>` inside it are literal (this also fixes the real-world
+bug of `&`-bearing YouTube URLs breaking). Links containing `"` or control characters are rejected up
+front (a valid URL has neither). The persistent, watchable `cmd /k` window is preserved
+(`UseShellExecute = false`). yt-dlp presence is checked on PATH with a clear error if absent. Release
+build: 0 errors.

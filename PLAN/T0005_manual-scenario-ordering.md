@@ -2,7 +2,7 @@
 
 **Ticket:** T0005
 **Proposal:** A3
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 65
 **Date:** 2026-07-11
 **Tier:** Moderate
@@ -60,4 +60,13 @@ Import-friendly.
 2. The chosen order survives an app restart.
 
 ## 12. Next step
-`/spec-tech T0005`.
+Done.
+
+**Result (2026-07-11):** Implemented. `AppItem.Order` (int) persists per scenario.
+`ConfigurationService.NormalizeOrder` sorts the in-memory list by `Order` (name breaks ties for
+legacy 0-ordinals) and reassigns contiguous 0..n-1 ordinals, persisting only changed items.
+`MoveItem(id, ±1)` swaps neighbours and saves the two affected. **Affordance decision (open
+question 1): Up/Down buttons** (`↑`/`↓` in the action row) - simplest reliable option; drag-and-drop
+deferred. `AddItem` appends imported/new items at the end (`max(Order)+1`). Both the settings list
+(`GetAllItems`) and `App.BuildJumpList` read the same ordered list, so they agree. Release build:
+0 errors.

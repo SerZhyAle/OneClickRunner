@@ -2,7 +2,7 @@
 
 **Ticket:** T0023
 **Proposal:** A9
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 30
 **Date:** 2026-07-11
 **Tier:** Strategic
@@ -52,4 +52,26 @@ over the existing controls.
 2. A dark appearance is available and legible; if OS-driven, switching the Windows theme updates the app.
 
 ## 12. Next step
-`/spec-tech T0023`.
+Done.
+
+**Result (2026-07-11):** Implemented as a minimal in-repo `ResourceDictionary` (ADR-1: no external
+dependency). `Themes/LightColors.xaml` + `Themes/DarkColors.xaml` share brush keys; `Themes/Styles.xaml`
+holds app-wide implicit styles (Window, Button, TextBox, ComboBox, CheckBox, GroupBox, ListView,
+GridViewColumnHeader, TextBlock) referencing those keys via `DynamicResource`. `Services/ThemeService`
+picks the palette from the Windows `AppsUseLightTheme` setting and swaps it live on
+`SystemEvents.UserPreferenceChanged` (**scope decision: follow the OS automatically**, no manual toggle).
+Verified at runtime: a fresh launch logged `Theme applied: dark` on a dark-themed OS. Release build:
+0 errors. Note: a styling layer over default control templates - popups (context menu) keep their
+default chrome.
+
+**Review follow-up (2026-07-11):** Runtime verification (window screenshots on a dark-themed OS) plus
+the adversarial review exposed two real theming defects, both fixed and re-verified visually:
+1. **Window backgrounds stayed white.** An implicit `Style TargetType="Window"` does not reach `Window`
+   *subclasses* (`MainWindow`, `AppItemDialog`, `LinkInputDialog`), so their backgrounds were default
+   white while the light label text became unreadable. Fixed by setting
+   `Background`/`Foreground="{DynamicResource ...}"` on each window element directly (the dead implicit
+   Window style was removed); hardcoded `Foreground="Gray"` labels now use `SubtleForegroundBrush`.
+2. **ComboBox unreadable in dark mode** (review, low): a non-editable ComboBox keeps the hardcoded light
+   Aero chrome regardless of `Background`. Fixed with a minimal themed `ControlTemplate` (toggle +
+   content presenter + popup) plus a `ComboBoxItem` style. Verified: the "Scenario type" combo now
+   renders dark with readable text.

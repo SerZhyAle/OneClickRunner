@@ -2,7 +2,7 @@
 
 **Ticket:** T0016
 **Proposal:** A7
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 45
 **Date:** 2026-07-11
 **Tier:** Easy
@@ -46,4 +46,12 @@ to the existing handlers. Guard for "no selection" as the buttons already do.
 2. Enter runs, F2 edits, and Del removes (with the existing confirmation) the selected scenario.
 
 ## 12. Next step
-`/spec-tech T0016`.
+Done.
+
+**Result (2026-07-11):** Implemented. `AppListView` has a context menu (Run, Edit, Clone, Export,
+separator, Remove) whose items reuse the existing button `Click` handlers, and a
+`PreviewMouseRightButtonDown` `EventSetter` selects the row under the cursor first so the menu acts on
+it. `AppListView_KeyDown` maps Enter=Run, F2=Edit, Del=Remove (Del reuses the existing remove
+confirmation), guarded by "a row is selected". No launch/remove logic was duplicated. (The context menu
+was attached to the ListView rather than defined in a Style setter, which the XAML compiler rejects for
+`Click` handlers.) Release build: 0 errors.

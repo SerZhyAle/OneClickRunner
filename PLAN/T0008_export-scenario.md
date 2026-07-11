@@ -1,6 +1,6 @@
 # Spec: T0008 - Export scenario to XML
 
-**Ticket:** T0008 · **Proposal:** A4 · **Status:** Draft · **Priority:** 55 · **Tier:** Easy · **Date:** 2026-07-11
+**Ticket:** T0008 · **Proposal:** A4 · **Status:** Implemented · **Priority:** 55 · **Tier:** Easy · **Date:** 2026-07-11
 **Complexity:** Primitive (1-2 files, reuses existing serializer) - implement directly on approval, no tactical plan.
 
 ## Problem
@@ -21,3 +21,9 @@ free and makes scenarios shareable/backupable.
 
 ## Links
 - Symmetric with the existing Import; interacts with ordering (T0005: imported items append).
+
+**Result (2026-07-11):** Implemented. An **Export** button sits next to Import; `ExportButton_Click`
+takes the selected scenario, shows a `SaveFileDialog` (default name = sanitized scenario name + `.xml`,
+starting in Desktop) and serializes the `AppItem` with the same `XmlSerializer` used by
+`ConfigurationService`/Import - so an exported file re-imports into an equivalent scenario. No selection
+shows the same "select an item" guidance as Run/Edit/Remove. Release build: 0 errors.

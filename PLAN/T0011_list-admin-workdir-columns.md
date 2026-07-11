@@ -1,6 +1,6 @@
 # Spec: T0011 - Show RunAsAdmin + Working Dir in the list
 
-**Ticket:** T0011 · **Proposal:** A2 · **Status:** Draft · **Priority:** 50 · **Tier:** Easy · **Date:** 2026-07-11
+**Ticket:** T0011 · **Proposal:** A2 · **Status:** Implemented · **Priority:** 50 · **Tier:** Easy · **Date:** 2026-07-11
 **Complexity:** Primitive (1-2 files, no new types) - implement directly on approval, no tactical plan.
 
 ## Problem
@@ -20,3 +20,8 @@ which scenarios will trigger UAC - especially relevant once launch elevation is 
 
 ## Links
 - Complements the elevation fix T0001; shares the list surface with T0005, T0016, T0022.
+
+**Result (2026-07-11):** Implemented in `MainWindow.xaml`. Added an **Admin** column showing a shield
+glyph (🛡) when `RunAsAdmin` is true (via a `DataTrigger`, no converter/model change) and a
+**Working Dir** column bound to `WorkingDirectory`. Existing Name/Path/Arguments widths rebalanced to
+fit. Release build: 0 errors.

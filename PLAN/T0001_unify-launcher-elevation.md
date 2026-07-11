@@ -2,7 +2,7 @@
 
 **Ticket:** T0001
 **Proposal:** C1 + D1 (merged - the shared launcher is the fix for the elevation bug)
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 90
 **Date:** 2026-07-11
 **Tier:** Moderate
@@ -56,4 +56,10 @@ List path drops its unconditional elevation and passes the flag through.
 3. The Run button and the Jump List produce identical process start behaviour for the same scenario.
 
 ## 12. Next step
-`/spec-tech T0001` - phased tactical plan.
+Done. Consider tactical follow-ups T0002/T0006/T0014, which build on the same seam.
+
+**Result (2026-07-11):** Implemented on branch `chore/import-agent-kit`. New `Services/ScenarioLauncher.cs`
+is the single launch path; elevation is set (`Verb = "runas"`) **iff** `AppItem.RunAsAdmin`. Both
+`App.HandleCommandLineArgs` (Jump List / CLI) and `MainWindow.LaunchItem` (Run button, double-click)
+call it, so the Jump List no longer unconditionally elevates. The duplicated `ProcessStartInfo`
+blocks were removed. Release build: 0 errors.

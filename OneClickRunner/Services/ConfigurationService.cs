@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using OneClickRunner.Models;
 
@@ -43,8 +44,34 @@ public class ConfigurationService
         {
             item.Filename = $"{item.Id}.xml";
         }
+        // New/imported items append to the end of the current order.
+        item.Order = _appItems.Count == 0 ? 0 : _appItems.Max(i => i.Order) + 1;
         _appItems.Add(item);
         SaveItem(item);
+    }
+
+    /// <summary>
+    /// Move a scenario one slot up (<paramref name="direction"/> = -1) or down (+1). Keeps the
+    /// persisted <see cref="AppItem.Order"/> values contiguous and saves the two affected items.
+    /// </summary>
+    public void MoveItem(Guid id, int direction)
+    {
+        var index = _appItems.FindIndex(i => i.Id == id);
+        if (index < 0)
+        {
+            return;
+        }
+        var newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= _appItems.Count)
+        {
+            return;
+        }
+
+        (_appItems[index], _appItems[newIndex]) = (_appItems[newIndex], _appItems[index]);
+        _appItems[index].Order = index;
+        _appItems[newIndex].Order = newIndex;
+        SaveItem(_appItems[index]);
+        SaveItem(_appItems[newIndex]);
     }
 
     public void UpdateItem(AppItem item)
@@ -81,6 +108,12 @@ public class ConfigurationService
                 if (item != null)
                 {
                     item.Filename = Path.GetFileName(file);
+                    // Legacy scenarios used the magic path; surface them as the yt-dlp type so the
+                    // editor reflects reality (the launcher already handles the sentinel directly).
+                    if (item.Path == ScenarioLauncher.LegacyYtDlpSentinel && item.Type == ScenarioType.Executable)
+                    {
+                        item.Type = ScenarioType.YtDlp;
+                    }
                     _appItems.Add(item);
                 }
             }
@@ -107,6 +140,29 @@ public class ConfigurationService
         }
 
         MarkInitialized();
+        NormalizeOrder();
+    }
+
+    /// <summary>
+    /// Sort the in-memory list by <see cref="AppItem.Order"/> (legacy items load with 0, so name
+    /// breaks ties), then reassign contiguous 0..n-1 ordinals. Persists only when something actually
+    /// changed, so the common case (already contiguous) writes nothing.
+    /// </summary>
+    private void NormalizeOrder()
+    {
+        _appItems = _appItems
+            .OrderBy(i => i.Order)
+            .ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        for (int i = 0; i < _appItems.Count; i++)
+        {
+            if (_appItems[i].Order != i)
+            {
+                _appItems[i].Order = i;
+                SaveItem(_appItems[i]);
+            }
+        }
     }
 
     private void MarkInitialized()

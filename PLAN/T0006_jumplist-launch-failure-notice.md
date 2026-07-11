@@ -2,7 +2,7 @@
 
 **Ticket:** T0006
 **Proposal:** B2
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 60
 **Date:** 2026-07-11
 **Tier:** Easy
@@ -49,4 +49,18 @@ short reason. Keep success paths silent.
 2. Launching a valid task shows no notice.
 
 ## 12. Next step
-`/spec-tech T0006`.
+Done.
+
+**Result (2026-07-11):** Implemented as `Windows/NotificationWindow` - a small, topmost,
+self-dismissing toast (7 s, click to dismiss, bottom-right of the work area). `App.HandleCommandLineArgs`
+shows it when `ScenarioLauncher.Launch` returns a non-cancelled failure, carrying the scenario name and
+reason. It is shown **modally** (`ShowDialog`) so the windowless one-shot process stays alive until the
+notice has been delivered (the spec's key risk). Successful launches and user-cancelled ones stay
+silent. **Mechanism decision:** a lightweight in-app transient window rather than a Windows toast, so it
+works without WinRT/AppUserModelID plumbing and delivers reliably from a one-shot process. Release
+build: 0 errors.
+
+**Review follow-up (2026-07-11):** The review noted the modal `ShowDialog` also fired from the live
+tray/pipe launch path, freezing the settings window for up to 7 s. `ShowTransient` now takes
+`blockUntilClosed`: modal only in the windowless one-shot process (`_mainWindow == null`), non-modal in
+a live instance so it never blocks the UI.

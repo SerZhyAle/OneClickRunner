@@ -4,7 +4,7 @@ namespace OneClickRunner.Windows
 {
     public partial class LinkInputDialog : Window
     {
-        public string Link { get; private set; }
+        public string? Link { get; private set; }
 
         public LinkInputDialog()
         {

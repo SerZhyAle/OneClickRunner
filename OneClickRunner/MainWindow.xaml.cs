@@ -16,6 +16,7 @@ public partial class MainWindow : Window
     private readonly ConfigurationService _configService;
     private readonly AutostartService _autostartService;
     private bool _isExiting = false;
+    private string _searchText = string.Empty;
 
     public MainWindow()
     {
@@ -35,12 +36,45 @@ public partial class MainWindow : Window
     private void LoadAppItems()
     {
         AppListView.ItemsSource = _configService.GetAllItems();
-        
+
+        // The default view is per-collection-instance; ItemsSource is replaced on every reload,
+        // so re-apply the live search filter each time.
+        var view = System.Windows.Data.CollectionViewSource.GetDefaultView(AppListView.ItemsSource);
+        if (view != null)
+        {
+            view.Filter = FilterScenario;
+        }
+
         // Refresh jump list when items change
         if (System.Windows.Application.Current is App app)
         {
             app.RefreshJumpList();
         }
+    }
+
+    private bool FilterScenario(object obj)
+    {
+        if (string.IsNullOrWhiteSpace(_searchText))
+        {
+            return true;
+        }
+        if (obj is not AppItem item)
+        {
+            return false;
+        }
+        return item.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase)
+            || item.Path.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void SearchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+    {
+        // May fire during InitializeComponent before the list exists.
+        if (AppListView?.ItemsSource == null)
+        {
+            return;
+        }
+        _searchText = SearchBox.Text ?? string.Empty;
+        System.Windows.Data.CollectionViewSource.GetDefaultView(AppListView.ItemsSource)?.Refresh();
     }
 
     private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -142,19 +176,47 @@ public partial class MainWindow : Window
         }
     }
 
+    private void AppListView_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (AppListView.SelectedItem is not AppItem)
+        {
+            return;
+        }
+        switch (e.Key)
+        {
+            case System.Windows.Input.Key.Enter:
+                RunButton_Click(sender, e);
+                e.Handled = true;
+                break;
+            case System.Windows.Input.Key.F2:
+                EditButton_Click(sender, e);
+                e.Handled = true;
+                break;
+            case System.Windows.Input.Key.Delete:
+                RemoveButton_Click(sender, e);
+                e.Handled = true;
+                break;
+        }
+    }
+
+    private void ListViewItem_PreviewMouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (sender is System.Windows.Controls.ListViewItem row)
+        {
+            row.IsSelected = true;
+        }
+    }
+
     private void CloneButton_Click(object sender, RoutedEventArgs e)
     {
         LoggingService.Log("Clone button clicked");
         if (AppListView.SelectedItem is AppItem selectedItem)
         {
-            var clone = new AppItem
-            {
-                Name = $"{selectedItem.Name} (copy)",
-                Path = selectedItem.Path,
-                Arguments = selectedItem.Arguments,
-                WorkingDirectory = selectedItem.WorkingDirectory,
-                RunAsAdmin = selectedItem.RunAsAdmin
-            };
+            // Copy every field (Type/Order/yt-dlp options included), then make it a distinct new item.
+            var clone = selectedItem.Clone();
+            clone.Id = Guid.NewGuid();
+            clone.Filename = string.Empty; // AddItem assigns a fresh filename and appends the order
+            clone.Name = $"{selectedItem.Name} (copy)";
 
             _configService.AddItem(clone);
             LoadAppItems();
@@ -170,31 +232,99 @@ public partial class MainWindow : Window
     private void LaunchItem(AppItem item)
     {
         LoggingService.Log($"Running item: {item.Name}");
+        var result = ScenarioLauncher.Launch(item, PromptForYtDlpLink);
+        if (!result.Success && !result.Cancelled)
+        {
+            System.Windows.MessageBox.Show($"Failed to run '{item.Name}': {result.ErrorMessage}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    /// <summary>Shows the link prompt for a yt-dlp scenario; returns null when cancelled.</summary>
+    private string? PromptForYtDlpLink()
+    {
+        var dialog = new LinkInputDialog { Owner = this };
+        return dialog.ShowDialog() == true ? dialog.Link : null;
+    }
+
+    private void MoveUpButton_Click(object sender, RoutedEventArgs e) => MoveSelected(-1);
+
+    private void MoveDownButton_Click(object sender, RoutedEventArgs e) => MoveSelected(+1);
+
+    private void MoveSelected(int direction)
+    {
+        if (AppListView.SelectedItem is AppItem selectedItem)
+        {
+            var id = selectedItem.Id;
+            _configService.MoveItem(id, direction);
+            LoadAppItems();
+            ReselectById(id);
+            LoggingService.Log($"Moved '{selectedItem.Name}' ({(direction < 0 ? "up" : "down")})");
+        }
+        else
+        {
+            System.Windows.MessageBox.Show("Please select an item to move.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+    }
+
+    /// <summary>Restore selection after LoadAppItems replaces the item source with fresh objects.</summary>
+    private void ReselectById(Guid id)
+    {
+        foreach (var obj in AppListView.Items)
+        {
+            if (obj is AppItem item && item.Id == id)
+            {
+                AppListView.SelectedItem = obj;
+                AppListView.ScrollIntoView(obj);
+                break;
+            }
+        }
+    }
+
+    private void ExportButton_Click(object sender, RoutedEventArgs e)
+    {
+        LoggingService.Log("Export button clicked");
+        if (AppListView.SelectedItem is not AppItem selectedItem)
+        {
+            System.Windows.MessageBox.Show("Please select an item to export.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var suggestedName = SanitizeFileName(selectedItem.Name);
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*",
+            Title = "Export scenario to XML",
+            FileName = string.IsNullOrWhiteSpace(suggestedName) ? "scenario.xml" : suggestedName + ".xml",
+            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
         try
         {
-            var startInfo = new System.Diagnostics.ProcessStartInfo
-            {
-                FileName = item.Path,
-                Arguments = item.Arguments,
-                UseShellExecute = true
-            };
-
-            if (item.RunAsAdmin)
-            {
-                startInfo.Verb = "runas";
-            }
-
-            if (!string.IsNullOrWhiteSpace(item.WorkingDirectory))
-            {
-                startInfo.WorkingDirectory = item.WorkingDirectory;
-            }
-            System.Diagnostics.Process.Start(startInfo);
+            var serializer = new XmlSerializer(typeof(AppItem));
+            using var stream = File.Create(dialog.FileName);
+            serializer.Serialize(stream, selectedItem);
+            LoggingService.Log($"Exported '{selectedItem.Name}' -> {dialog.FileName}");
+            System.Windows.MessageBox.Show($"Exported '{selectedItem.Name}'.", "Export Successful", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
-            LoggingService.Log($"Run error: {ex.Message}");
-            System.Windows.MessageBox.Show($"Failed to run '{item.Name}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            LoggingService.Log($"Export error: {ex.Message}");
+            System.Windows.MessageBox.Show($"Failed to export: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    private static string SanitizeFileName(string name)
+    {
+        foreach (var c in Path.GetInvalidFileNameChars())
+        {
+            name = name.Replace(c, '_');
+        }
+        return name.Trim();
     }
 
     private void EditButton_Click(object sender, RoutedEventArgs e)
@@ -203,16 +333,9 @@ public partial class MainWindow : Window
         if (AppListView.SelectedItem is AppItem selectedItem)
         {
             LoggingService.Log($"Editing item: {selectedItem.Name}");
-            var itemToEdit = new AppItem
-            {
-                Id = selectedItem.Id,
-                Name = selectedItem.Name,
-                Path = selectedItem.Path,
-                Arguments = selectedItem.Arguments,
-                WorkingDirectory = selectedItem.WorkingDirectory,
-                RunAsAdmin = selectedItem.RunAsAdmin,
-                Filename = selectedItem.Filename
-            };
+            // Edit a full copy (all fields, incl. Type/Order/yt-dlp) so a cancel leaves the original
+            // untouched and an OK preserves fields the dialog does not surface.
+            var itemToEdit = selectedItem.Clone();
 
             var dialog = new AppItemDialog(itemToEdit);
             if (dialog.ShowDialog() == true && dialog.AppItem != null)
@@ -279,43 +402,35 @@ public partial class MainWindow : Window
         }
     }
 
-    private void ExitButton_Click(object sender, RoutedEventArgs e)
+    private void ExitButton_Click(object sender, RoutedEventArgs e) => RequestExit();
+
+    /// <summary>
+    /// The single confirmed-exit path: confirm, set the exit flag so <see cref="Window_Closing"/>
+    /// allows the window to close, then shut the application down. Called by the Exit button and the
+    /// tray menu's Exit item.
+    /// </summary>
+    public void RequestExit()
     {
         try
         {
-            LoggingService.Log("=== EXIT BUTTON CLICKED START ===");
-            LoggingService.Log($"Sender: {sender?.GetType().Name}");
-            LoggingService.Log($"RoutedEventArgs: {e?.GetType().Name}");
-            LoggingService.Log($"Current thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
-            LoggingService.Log($"Application.Current is null: {System.Windows.Application.Current == null}");
-            LoggingService.Log($"_isExiting before: {_isExiting}");
-            
-            var result = System.Windows.MessageBox.Show("Are you sure you want to exit OneClickRunner?", 
+            LoggingService.Log($"RequestExit invoked (_isExiting={_isExiting})");
+            var result = System.Windows.MessageBox.Show("Are you sure you want to exit OneClickRunner?",
                 "Confirm Exit", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            
-            LoggingService.Log($"MessageBox result: {result}");
-            
+
             if (result == MessageBoxResult.Yes)
             {
-                LoggingService.Log("User confirmed exit - setting _isExiting = true");
+                LoggingService.Log("User confirmed exit - shutting down");
                 _isExiting = true;
-                LoggingService.Log($"_isExiting after: {_isExiting}");
-                
-                LoggingService.Log("About to call Application.Current.Shutdown()");
                 System.Windows.Application.Current?.Shutdown();
-                LoggingService.Log("Shutdown() called successfully");
             }
             else
             {
                 LoggingService.Log("User cancelled exit");
             }
-            
-            LoggingService.Log("=== EXIT BUTTON CLICKED END ===");
         }
         catch (Exception ex)
         {
-            LoggingService.Log($"EXCEPTION in ExitButton_Click: {ex.Message}");
-            LoggingService.Log($"StackTrace: {ex.StackTrace}");
+            LoggingService.Log($"EXCEPTION in RequestExit: {ex.Message}\n{ex.StackTrace}");
             System.Windows.MessageBox.Show($"Error during exit: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }

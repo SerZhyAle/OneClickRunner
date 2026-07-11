@@ -2,7 +2,7 @@
 
 **Ticket:** T0012
 **Proposal:** A6
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 50
 **Date:** 2026-07-11
 **Tier:** Moderate
@@ -50,4 +50,9 @@ fields stretch. Preserve control names so the code-behind is untouched (or minim
 3. Add and Edit still save the same fields as before.
 
 ## 12. Next step
-`/spec-tech T0012`.
+Done; the yt-dlp type selector (T0013) landed in this reworked layout.
+
+**Result (2026-07-11):** Implemented. `AppItemDialog.xaml` now stacks each label on its own line above
+its field (no margin-offset overlap); fields live in `*`-width grid columns so they stretch. The window
+is `ResizeMode="CanResize"` with `MinHeight`/`MinWidth`, so it widens and long paths become readable.
+All `x:Name`s were preserved, so the code-behind's control access is unchanged. Release build: 0 errors.

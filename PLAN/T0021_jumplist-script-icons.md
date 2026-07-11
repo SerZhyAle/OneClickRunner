@@ -2,7 +2,7 @@
 
 **Ticket:** T0021
 **Proposal:** B1
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 35
 **Date:** 2026-07-11
 **Tier:** Easy
@@ -42,4 +42,10 @@ where the Jump List (and, if built, the tray menu T0009) is assembled.
 2. An `.exe` scenario still shows its own icon.
 
 ## 12. Next step
-`/spec-tech T0021`.
+Done.
+
+**Result (2026-07-11):** Implemented as `Services/ScenarioIconResolver`, used by `JumpListService`.
+Executables (`.exe`/`.com`/`.scr`) use their own icon; scripts borrow their interpreter's icon
+(`.ps1`->powershell, `.bat`/`.cmd`->cmd, `.py`->py/python, `.vbs`/`.js`->wscript), resolved on PATH via
+the now-`internal` `ScenarioLauncher.ResolveOnPath`. yt-dlp scenarios and any unresolved target fall
+back to the app's own exe icon (embedded `app.ico`), so a task is never blank. Release build: 0 errors.

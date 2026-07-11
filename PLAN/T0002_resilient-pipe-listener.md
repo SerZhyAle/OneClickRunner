@@ -2,7 +2,7 @@
 
 **Ticket:** T0002
 **Proposal:** C2
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 85
 **Date:** 2026-07-11
 **Tier:** Easy
@@ -48,4 +48,13 @@ unhandled exception.
 2. After a handled pipe error, sending `/settings` to the running instance still restores the window.
 
 ## 12. Next step
-`/spec-tech T0002`.
+Done.
+
+**Result (2026-07-11):** Implemented in `App.StartPipeListener`. The `try/catch` now sits **inside**
+the `while` loop, so a failed accept/read is logged (`"Pipe connection error (listener continues)"`)
+and the loop accepts the next connection instead of dying. The loop is now async
+(`WaitForConnectionAsync`/`ReadLineAsync`) driven by a `CancellationTokenSource`, cancelled in
+`OnExit` for a clean stop (no unhandled-exception exit). Dispatch was extracted to
+`DispatchPipeCommand`, which also fixes an adjacent bug: a Jump List **Exit** sent to the running
+instance (`/exit` over the pipe) was previously ignored and now shuts the app down. Release build:
+0 errors, 0 warnings.

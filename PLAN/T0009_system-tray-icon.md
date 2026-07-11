@@ -2,7 +2,7 @@
 
 **Ticket:** T0009
 **Proposal:** B6
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 55
 **Date:** 2026-07-11
 **Tier:** Strategic
@@ -65,4 +65,13 @@ Why: WinForms is already enabled; no new dependency; least code.
 3. Exiting the app removes the tray icon.
 
 ## 12. Next step
-`/spec-tech T0009`.
+Done. Update README (T0010 counterpart) to mention the tray.
+
+**Result (2026-07-11):** Implemented as `Services/TrayIconService` (WinForms `NotifyIcon`, per ADR-1),
+owned by `App`. Double-click restores the settings window; right-click shows a menu listing the same
+ordered scenarios as the Jump List, plus a separator, **Settings** (restore) and **Exit** (the
+confirmed-exit path via the new `MainWindow.RequestExit`). The menu is rebuilt from the shared
+`RefreshJumpList` call, so it cannot drift from the Jump List. The icon is disposed in `OnExit`
+(no ghost). All actions route through caller-supplied callbacks, so the service keeps
+`Services -> Models` layering. **Open questions:** icon = the existing `Assets/app.ico`; first run
+still shows Settings when empty (unchanged). Release build: 0 errors.

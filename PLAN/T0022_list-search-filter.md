@@ -2,7 +2,7 @@
 
 **Ticket:** T0022
 **Proposal:** A8
-**Status:** Draft
+**Status:** Implemented
 **Priority:** 35
 **Date:** 2026-07-11
 **Tier:** Easy
@@ -41,4 +41,10 @@ collection view on text change. Storage and the Jump List are untouched.
 2. Emptying the box shows all scenarios again.
 
 ## 12. Next step
-`/spec-tech T0022`.
+Done.
+
+**Result (2026-07-11):** Implemented. A **Search** box in the header filters the list's default
+`ICollectionView` live (`FilterScenario`, case-insensitive over Name + Path); emptying it restores the
+full list. The filter is re-applied in `LoadAppItems` because `ItemsSource` is replaced on every reload.
+Storage and the Jump List are untouched. Reorder (T0005) still operates on the underlying full list, so
+moving a scenario while filtered is safe (spec's interaction risk). Release build: 0 errors.
