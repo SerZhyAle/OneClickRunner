@@ -3,6 +3,17 @@
 Windows app to launch your apps and scripts ("scenarios") in one click from the Windows
 taskbar Jump List.
 
+**[Website](https://serzhyale.github.io/OneClickRunner/)** ·
+**[Setup guide](https://serzhyale.github.io/OneClickRunner/guide.html)** ·
+**[Releases](https://github.com/SerZhyAle/OneClickRunner/releases)**
+
+Part of the **[SZA](https://sza.od.ua)** family of tools — see also
+[FastMediaSorter](https://serzhyale.github.io/FastMediaSorter_Lite/),
+[CyrFlip](https://serzhyale.github.io/CyrFlip/),
+[doc-html-translate](https://serzhyale.github.io/doc-html-translate/),
+[FileDO](https://serzhyale.github.io/FileDO/) and
+[Universal Agent Kit](https://serzhyale.github.io/universal-agent-kit/).
+
 ## Features
 
 - **Taskbar Jump List launcher**: right-click the OneClickRunner taskbar icon to run any

@@ -17,6 +17,9 @@ html[data-lang="ua"] [data-l]:not([data-l="ua"]) { display: none; }
 }
 @keyframes markIn { from { opacity: 0; transform: scale(.8) translateY(4px); } to { opacity: 1; transform: none; } }
 
+/* ── Hero button row. ───────────────────────────────────────────── */
+.button-group { display: flex; flex-wrap: wrap; justify-content: center; gap: .7rem; }
+
 /* ── Section headings get the subtle divider the SZA sites use. ──── */
 .section-card h2 {
   display: flex; align-items: center; gap: .75rem;
@@ -53,6 +56,7 @@ html[data-theme="light"] .feat { background: rgba(16,40,20,.02); }
   display: grid; place-items: center; color: var(--acc);
   background: color-mix(in srgb, var(--acc) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--acc) 22%, transparent);
+  font-family: var(--font-heading); font-weight: 800; font-size: 1.05rem;
 }
 .feat .fi svg { width: 20px; height: 20px; }
 .feat h3 { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; margin: .1rem 0 .3rem; color: var(--text); }
