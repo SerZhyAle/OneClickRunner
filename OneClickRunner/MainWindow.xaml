@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:OneClickRunner"
         mc:Ignorable="d"
         Title="OneClickRunner Settings" Height="500" Width="700"
+        Icon="Assets/app.ico"
         Closing="Window_Closing">
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -15,9 +16,13 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Applications and Scripts" FontSize="16" FontWeight="Bold" Grid.Row="0" Margin="0,0,0,10"/>
+        <DockPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Name="VersionText" DockPanel.Dock="Right" VerticalAlignment="Center"
+                       FontSize="11" Foreground="Gray"/>
+            <TextBlock Text="Applications and Scripts" FontSize="16" FontWeight="Bold"/>
+        </DockPanel>
 
-        <ListView Name="AppListView" Grid.Row="1" SelectionMode="Single">
+        <ListView Name="AppListView" Grid.Row="1" SelectionMode="Single" MouseDoubleClick="AppListView_MouseDoubleClick">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
@@ -32,6 +37,7 @@
             <Button Name="ImportButton" Content="Import" Width="80" Margin="0,0,10,0" Click="ImportButton_Click"/>
             <Button Name="RunButton" Content="Run" Width="80" Margin="0,0,10,0" Click="RunButton_Click"/>
             <Button Name="EditButton" Content="Edit" Width="80" Margin="0,0,10,0" Click="EditButton_Click"/>
+            <Button Name="CloneButton" Content="Clone" Width="80" Margin="0,0,10,0" Click="CloneButton_Click"/>
             <Button Name="RemoveButton" Content="Remove" Width="80" Click="RemoveButton_Click"/>
         </StackPanel>
 

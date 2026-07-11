@@ -23,6 +23,9 @@ public partial class MainWindow : Window
         _configService = new ConfigurationService();
         _autostartService = new AutostartService();
         
+        VersionText.Text = VersionService.DisplayVersion;
+        Title = $"OneClickRunner Settings — {VersionService.DisplayVersion}";
+
         LoadAppItems();
         AutostartCheckBox.IsChecked = _autostartService.IsAutostartEnabled();
 
@@ -114,37 +117,83 @@ public partial class MainWindow : Window
         LoggingService.Log("Run button clicked");
         if (AppListView.SelectedItem is AppItem selectedItem)
         {
-            LoggingService.Log($"Running item: {selectedItem.Name}");
-            try
-            {
-                var startInfo = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = selectedItem.Path,
-                    Arguments = selectedItem.Arguments,
-                    UseShellExecute = true
-                };
-
-                if (selectedItem.RunAsAdmin)
-                {
-                    startInfo.Verb = "runas";
-                }
-
-                if (!string.IsNullOrWhiteSpace(selectedItem.WorkingDirectory))
-                {
-                    startInfo.WorkingDirectory = selectedItem.WorkingDirectory;
-                }
-                System.Diagnostics.Process.Start(startInfo);
-            }
-            catch (Exception ex)
-            {
-                LoggingService.Log($"Run error: {ex.Message}");
-                System.Windows.MessageBox.Show($"Failed to run '{selectedItem.Name}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            LaunchItem(selectedItem);
         }
         else
         {
             LoggingService.Log("Run failed: No item selected");
             System.Windows.MessageBox.Show("Please select an item to run.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+    }
+
+    private void AppListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        // Run only when an actual row was double-clicked, not the header or empty space.
+        var source = e.OriginalSource as System.Windows.DependencyObject;
+        while (source != null && source is not System.Windows.Controls.ListViewItem)
+        {
+            source = System.Windows.Media.VisualTreeHelper.GetParent(source);
+        }
+
+        if (source is System.Windows.Controls.ListViewItem && AppListView.SelectedItem is AppItem item)
+        {
+            LoggingService.Log("Item double-clicked");
+            LaunchItem(item);
+        }
+    }
+
+    private void CloneButton_Click(object sender, RoutedEventArgs e)
+    {
+        LoggingService.Log("Clone button clicked");
+        if (AppListView.SelectedItem is AppItem selectedItem)
+        {
+            var clone = new AppItem
+            {
+                Name = $"{selectedItem.Name} (copy)",
+                Path = selectedItem.Path,
+                Arguments = selectedItem.Arguments,
+                WorkingDirectory = selectedItem.WorkingDirectory,
+                RunAsAdmin = selectedItem.RunAsAdmin
+            };
+
+            _configService.AddItem(clone);
+            LoadAppItems();
+            LoggingService.Log($"Cloned '{selectedItem.Name}' -> '{clone.Name}'");
+        }
+        else
+        {
+            LoggingService.Log("Clone failed: No item selected");
+            System.Windows.MessageBox.Show("Please select an item to clone.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+    }
+
+    private void LaunchItem(AppItem item)
+    {
+        LoggingService.Log($"Running item: {item.Name}");
+        try
+        {
+            var startInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = item.Path,
+                Arguments = item.Arguments,
+                UseShellExecute = true
+            };
+
+            if (item.RunAsAdmin)
+            {
+                startInfo.Verb = "runas";
+            }
+
+            if (!string.IsNullOrWhiteSpace(item.WorkingDirectory))
+            {
+                startInfo.WorkingDirectory = item.WorkingDirectory;
+            }
+            System.Diagnostics.Process.Start(startInfo);
+        }
+        catch (Exception ex)
+        {
+            LoggingService.Log($"Run error: {ex.Message}");
+            System.Windows.MessageBox.Show($"Failed to run '{item.Name}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -253,7 +302,7 @@ public partial class MainWindow : Window
                 LoggingService.Log($"_isExiting after: {_isExiting}");
                 
                 LoggingService.Log("About to call Application.Current.Shutdown()");
-                System.Windows.Application.Current.Shutdown();
+                System.Windows.Application.Current?.Shutdown();
                 LoggingService.Log("Shutdown() called successfully");
             }
             else

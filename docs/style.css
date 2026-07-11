@@ -1,0 +1,76 @@
+/* OneClickRunner docs — built on the shared SZA Web Kit (Pine + Gold).
+   The design system lives in assets/sza-kit.css (tokens + components).
+   This file keeps only OneClickRunner-specific rules. */
+@import url("assets/sza-kit.css");
+
+/* ── i18n: pure-CSS data-lang toggle (RU / EN / UA) ──────────────── */
+html[data-lang="ru"] [data-l]:not([data-l="ru"]) { display: none; }
+html[data-lang="en"] [data-l]:not([data-l="en"]) { display: none; }
+html[data-lang="ua"] [data-l]:not([data-l="ua"]) { display: none; }
+
+/* ── Hero logo mark = the app icon itself (self-contained badge). ── */
+.hero-mark {
+  display: block; width: 96px; height: 96px; margin: 0 auto 1.1rem;
+  border-radius: 22px;
+  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, .45));
+  animation: markIn .7s cubic-bezier(.34, 1.2, .4, 1) both;
+}
+@keyframes markIn { from { opacity: 0; transform: scale(.8) translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ── Section headings get the subtle divider the SZA sites use. ──── */
+.section-card h2 {
+  display: flex; align-items: center; gap: .75rem;
+  font-size: 1.35rem; font-weight: 700; margin-bottom: 1rem;
+}
+.section-card h2::after {
+  content: ""; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+.section-card > p { color: var(--text-2); }
+
+/* ── Step / feature lists with green markers. ───────────────────── */
+ol.steps { padding-left: 1.3rem; margin: 0; color: var(--text-2); }
+ol.steps li { margin: .5rem 0; }
+ol.steps li::marker { color: var(--acc); font-weight: 700; }
+ul.features { list-style: none; padding-left: 0; margin: 0; }
+ul.features li { position: relative; padding-left: 1.4rem; margin: .55rem 0; color: var(--text-2); }
+ul.features li::before {
+  content: ""; position: absolute; left: 0; top: .62em;
+  width: 7px; height: 7px; border-radius: 50%; background: var(--acc);
+}
+
+/* ── Feature grid (icon cards inside a section). ────────────────── */
+.feat-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+@media (min-width: 700px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
+.feat {
+  display: flex; gap: .9rem; align-items: flex-start;
+  padding: 1rem 1.1rem; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: rgba(255,255,255,.02);
+}
+html[data-theme="light"] .feat { background: rgba(16,40,20,.02); }
+.feat .fi {
+  flex: none; width: 38px; height: 38px; border-radius: 10px;
+  display: grid; place-items: center; color: var(--acc);
+  background: color-mix(in srgb, var(--acc) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--acc) 22%, transparent);
+}
+.feat .fi svg { width: 20px; height: 20px; }
+.feat h3 { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; margin: .1rem 0 .3rem; color: var(--text); }
+.feat p { color: var(--muted); font-size: .88rem; margin: 0; }
+
+/* ── Inline code chips inside prose. ────────────────────────────── */
+:not(pre):not(.copybox) > code {
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid var(--border);
+  padding: .1rem .4rem; border-radius: 6px;
+  font-size: .88em; color: var(--text); overflow-wrap: anywhere;
+}
+html[data-theme="light"] :not(pre):not(.copybox) > code { background: rgba(16, 40, 20, .06); }
+
+/* ── Command block (multi-line build steps). ────────────────────── */
+pre.code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: .9rem 1.1rem;
+  overflow-x: auto; color: var(--code-ink); font-size: .86rem; line-height: 1.7;
+}
+pre.code .tok { color: var(--acc-strong); }

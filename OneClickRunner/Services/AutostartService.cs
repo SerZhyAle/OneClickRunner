@@ -30,8 +30,11 @@ public class AutostartService
         try
         {
             using var key = Registry.CurrentUser.OpenSubKey(RunRegistryKey, true);
-            var exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            exePath = exePath.Replace(".dll", ".exe");
+            var exePath = Environment.ProcessPath ?? System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName;
+            if (string.IsNullOrEmpty(exePath))
+            {
+                throw new InvalidOperationException("Could not resolve the executable path for autostart.");
+            }
             key?.SetValue(AppName, $"\"{exePath}\"");
         }
         catch (Exception ex)

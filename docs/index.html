@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OneClickRunner — launch your apps &amp; scripts in one click on Windows</title>
+  <meta name="description" content="A lightweight Windows launcher that runs your apps, batch, PowerShell, Python and VBScript scenarios in a single click from the taskbar Jump List — with per-scenario arguments, working directory, admin rights and Windows autostart." />
+  <meta name="theme-color" content="#0a0f0a" />
+  <meta property="og:title" content="OneClickRunner" />
+  <meta property="og:description" content="Launch your apps and scripts in one click from the Windows taskbar Jump List." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/SerZhyAle/OneClickRunner/main/docs/assets/icon-512.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icon-16.png" />
+  <link rel="icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="assets/icon-256.png" />
+
+  <!-- pre-paint: resolve theme + language before the stylesheet, so nothing flashes -->
+  <script>
+  (function(){try{
+    var t=localStorage.getItem('sza-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+    document.documentElement.setAttribute('data-theme',t);
+    var l=localStorage.getItem('sza-lang');
+    if(!l){var n=(navigator.language||'en').toLowerCase();l=n.indexOf('ru')==0?'ru':n.indexOf('uk')==0?'ua':'en';}
+    document.documentElement.setAttribute('data-lang',l);
+  }catch(e){}})();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <header class="site-header">
+    <span class="brand">OneClickRunner<span class="dot">.</span></span>
+    <div class="seg" role="group" aria-label="Language">
+      <button data-lang="ru">RU</button><button data-lang="en">EN</button><button data-lang="ua">UA</button>
+    </div>
+    <button class="theme-btn" id="themeBtn" aria-label="Switch theme">◐</button>
+    <a class="btn btn-primary btn-sm" href="#get">
+      <span data-l="ru">Скачать</span><span data-l="en">Download</span><span data-l="ua">Завантажити</span>
+    </a>
+  </header>
+
+  <main class="container">
+    <!-- HERO -->
+    <section class="hero">
+      <img class="hero-mark" src="assets/icon-256.png" width="96" height="96" alt="OneClickRunner icon — a list of commands with a click cursor" />
+
+      <h1>OneClickRunner</h1>
+      <p class="lead">
+        <span data-l="ru">Запускайте свои приложения и скрипты в один клик — прямо из списка переходов (Jump List) на панели задач Windows.</span>
+        <span data-l="en">Launch your apps and scripts in a single click — straight from the Windows taskbar Jump List.</span>
+        <span data-l="ua">Запускайте свої застосунки та скрипти в один клік — прямо зі списку переходів (Jump List) на панелі завдань Windows.</span>
+      </p>
+      <div class="pills" style="justify-content:center">
+        <span class="pill">Windows 10 / 11</span>
+        <span class="pill">.NET 8</span>
+        <span class="pill">Jump List</span>
+        <span class="pill">EXE · BAT · PS1 · PY · VBS</span>
+      </div>
+    </section>
+
+    <!-- GET IT (above the fold) -->
+    <section class="get" id="get">
+      <p class="whatfor">
+        <span data-l="ru"><strong>Легковесный лаунчер для Windows.</strong> Настройте «сценарии» — приложения, командные файлы, PowerShell, Python или VBScript — и запускайте любой из них правым кликом по значку на панели задач.</span>
+        <span data-l="en"><strong>A lightweight Windows launcher.</strong> Configure "scenarios" — apps, batch files, PowerShell, Python or VBScript — and run any of them with a right-click on the taskbar icon.</span>
+        <span data-l="ua"><strong>Легкий лаунчер для Windows.</strong> Налаштуйте «сценарії» — застосунки, командні файли, PowerShell, Python або VBScript — і запускайте будь-який правим кліком по значку на панелі завдань.</span>
+      </p>
+
+      <div class="demo hero-demo" style="justify-content:center">
+        <span class="arrow" data-l="ru">правый клик по значку →</span>
+        <span class="arrow" data-l="en">right-click the icon →</span>
+        <span class="arrow" data-l="ua">правий клік по значку →</span>
+        <code class="out" data-l="ru">выберите сценарий → запуск</code>
+        <code class="out" data-l="en">pick a scenario → it runs</code>
+        <code class="out" data-l="ua">оберіть сценарій → запуск</code>
+      </div>
+
+      <div class="channels">
+        <a class="btn btn-primary" id="ghDownload" href="https://github.com/SerZhyAle/OneClickRunner/releases">GitHub Releases</a>
+        <a class="btn btn-ghost" href="https://github.com/SerZhyAle/OneClickRunner">
+          <span data-l="ru">Исходный код</span><span data-l="en">Source code</span><span data-l="ua">Вихідний код</span>
+        </a>
+      </div>
+
+      <div class="copybox"><span class="tok">git</span> clone https://github.com/SerZhyAle/OneClickRunner.git<button class="copy" data-copy="git clone https://github.com/SerZhyAle/OneClickRunner.git">Copy</button></div>
+
+      <ol class="quickstart">
+        <li><span data-l="ru">Запустите <code>OneClickRunner.exe</code> — откроется окно настроек.</span><span data-l="en">Run <code>OneClickRunner.exe</code> — the Settings window opens.</span><span data-l="ua">Запустіть <code>OneClickRunner.exe</code> — відкриється вікно налаштувань.</span></li>
+        <li><span data-l="ru">Добавьте сценарий: имя, путь и, при желании, аргументы и рабочую папку.</span><span data-l="en">Add a scenario: name, path and, optionally, arguments and a working directory.</span><span data-l="ua">Додайте сценарій: ім'я, шлях і, за бажанням, аргументи та робочу теку.</span></li>
+        <li><span data-l="ru">Найдите его в списке переходов — правый клик по значку на панели задач.</span><span data-l="en">Find it on the Jump List — right-click the taskbar icon.</span><span data-l="ua">Знайдіть його у списку переходів — правий клік по значку на панелі завдань.</span></li>
+      </ol>
+    </section>
+
+    <!-- WHAT IT DOES -->
+    <section class="card section-card">
+      <h2><span data-l="ru">Что это</span><span data-l="en">What it does</span><span data-l="ua">Що це</span></h2>
+      <p data-l="ru"><strong>Список переходов становится вашей панелью запуска.</strong> Каждый сценарий превращается в задачу в Jump List на панели задач Windows — клик по ней запускает сценарий. Приложение работает в одном экземпляре: клик по задаче передаёт команду уже запущенному экземпляру через именованный канал, поэтому запуск мгновенный и без второго окна.</p>
+      <p data-l="en"><strong>The Jump List becomes your launch panel.</strong> Each scenario turns into a task on the Windows taskbar Jump List — clicking it launches that scenario. The app runs as a single instance: clicking a task forwards the command to the already-running instance over a named pipe, so launches are instant and never open a second window.</p>
+      <p data-l="ua"><strong>Список переходів стає вашою панеллю запуску.</strong> Кожен сценарій перетворюється на задачу в Jump List на панелі завдань Windows — клік по ній запускає сценарій. Застосунок працює в одному екземплярі: клік по задачі передає команду вже запущеному екземпляру через іменований канал, тож запуск миттєвий і без другого вікна.</p>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="card section-card">
+      <h2><span data-l="ru">Возможности</span><span data-l="en">Features</span><span data-l="ua">Можливості</span></h2>
+      <div class="feat-grid">
+        <div class="feat">
+          <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+          <div>
+            <h3 data-l="ru">Запуск из панели задач</h3><h3 data-l="en">Taskbar Jump List launcher</h3><h3 data-l="ua">Запуск з панелі завдань</h3>
+            <p data-l="ru">Правый клик по значку — и любой настроенный сценарий, а также Настройки и Выход.</p>
+            <p data-l="en">Right-click the icon to run any configured scenario, plus Settings and Exit.</p>
+            <p data-l="ua">Правий клік по значку — і будь-який налаштований сценарій, а також Налаштування та Вихід.</p>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></span>
+          <div>
+            <h3 data-l="ru">Любой тип запуска</h3><h3 data-l="en">Run anything</h3><h3 data-l="ua">Будь-який тип запуску</h3>
+            <p data-l="ru">EXE, batch, PowerShell, Python или VBScript — с аргументами и рабочей папкой.</p>
+            <p data-l="en">EXE, batch, PowerShell, Python or VBScript — with arguments and a working directory.</p>
+            <p data-l="ua">EXE, batch, PowerShell, Python чи VBScript — з аргументами та робочою текою.</p>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+          <div>
+            <h3 data-l="ru">Права администратора</h3><h3 data-l="en">Per-scenario admin</h3><h3 data-l="ua">Права адміністратора</h3>
+            <p data-l="ru">Пометьте сценарий, чтобы он запускался с повышенными правами.</p>
+            <p data-l="en">Mark a scenario to launch elevated when it needs admin rights.</p>
+            <p data-l="ua">Позначте сценарій, щоб він запускався з підвищеними правами.</p>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg></span>
+          <div>
+            <h3 data-l="ru">Автозапуск с Windows</h3><h3 data-l="en">Windows autostart</h3><h3 data-l="ua">Автозапуск з Windows</h3>
+            <p data-l="ru">По желанию стартует вместе с Windows и работает свёрнутым.</p>
+            <p data-l="en">Optionally starts with Windows and runs minimized.</p>
+            <p data-l="ua">За бажанням стартує разом із Windows і працює згорнутим.</p>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg></span>
+          <div>
+            <h3 data-l="ru">Управление сценариями</h3><h3 data-l="en">Manage scenarios</h3><h3 data-l="ua">Керування сценаріями</h3>
+            <p data-l="ru">Добавляйте, импортируйте, редактируйте, клонируйте и удаляйте — в окне настроек.</p>
+            <p data-l="en">Add, import, edit, clone and remove — all from the Settings window.</p>
+            <p data-l="ua">Додавайте, імпортуйте, редагуйте, клонуйте та видаляйте — у вікні налаштувань.</p>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></span>
+          <div>
+            <h3 data-l="ru">Портативное хранение</h3><h3 data-l="en">Portable storage</h3><h3 data-l="ua">Портативне зберігання</h3>
+            <p data-l="ru">Каждый сценарий — отдельный XML-файл, который легко экспортировать и импортировать.</p>
+            <p data-l="en">Each scenario is a standalone XML file — easy to export and import.</p>
+            <p data-l="ua">Кожен сценарій — окремий XML-файл, який легко експортувати та імпортувати.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW TO USE -->
+    <section class="card section-card">
+      <h2><span data-l="ru">Как пользоваться</span><span data-l="en">How to use</span><span data-l="ua">Як користуватися</span></h2>
+      <ol class="steps" data-l="ru">
+        <li>Запустите приложение — при первом запуске оно создаёт пример сценария «Calculator» и открывает окно настроек.</li>
+        <li>Нажмите <strong>Add</strong> и укажите имя, путь и, при необходимости, аргументы, рабочую папку и «Run as Admin».</li>
+        <li>Закройте окно — приложение продолжит работать свёрнутым, а сценарий появится в списке переходов.</li>
+        <li>Правый клик по значку на панели задач → выберите сценарий, чтобы запустить его в один клик.</li>
+      </ol>
+      <ol class="steps" data-l="en">
+        <li>Launch the app — on first run it seeds a sample "Calculator" scenario and opens the Settings window.</li>
+        <li>Click <strong>Add</strong> and set the name, path and — if needed — arguments, working directory and "Run as Admin".</li>
+        <li>Close the window — the app keeps running minimized, and the scenario appears on the Jump List.</li>
+        <li>Right-click the taskbar icon → pick a scenario to launch it in one click.</li>
+      </ol>
+      <ol class="steps" data-l="ua">
+        <li>Запустіть застосунок — під час першого запуску він створює приклад сценарію «Calculator» і відкриває вікно налаштувань.</li>
+        <li>Натисніть <strong>Add</strong> і вкажіть ім'я, шлях і, за потреби, аргументи, робочу теку та «Run as Admin».</li>
+        <li>Закрийте вікно — застосунок продовжить працювати згорнутим, а сценарій з'явиться у списку переходів.</li>
+        <li>Правий клік по значку на панелі завдань → оберіть сценарій, щоб запустити його в один клік.</li>
+      </ol>
+      <div class="note">
+        <span class="tag" data-l="ru">Заметка</span><span class="tag" data-l="en">Note</span><span class="tag" data-l="ua">Примітка</span>
+        <p data-l="ru">Сценарии хранятся отдельными XML-файлами в <code>%APPDATA%\OneClickRunner\Scenarios\</code>, а действия пишутся в <code>%APPDATA%\OneClickRunner\activity.log</code>. Кнопкой <strong>Import</strong> можно добавить сценарий из <code>.xml</code>-файла.</p>
+        <p data-l="en">Scenarios are stored as individual XML files in <code>%APPDATA%\OneClickRunner\Scenarios\</code>, and actions are written to <code>%APPDATA%\OneClickRunner\activity.log</code>. Use <strong>Import</strong> to add a scenario from an <code>.xml</code> file.</p>
+        <p data-l="ua">Сценарії зберігаються окремими XML-файлами в <code>%APPDATA%\OneClickRunner\Scenarios\</code>, а дії пишуться до <code>%APPDATA%\OneClickRunner\activity.log</code>. Кнопкою <strong>Import</strong> можна додати сценарій з <code>.xml</code>-файлу.</p>
+      </div>
+    </section>
+
+    <!-- INSTALL / BUILD -->
+    <section class="card section-card" id="install">
+      <h2><span data-l="ru">Установка</span><span data-l="en">Install</span><span data-l="ua">Встановлення</span></h2>
+      <p>
+        <span data-l="ru">Два способа получить OneClickRunner:</span>
+        <span data-l="en">Two ways to get OneClickRunner:</span>
+        <span data-l="ua">Два способи отримати OneClickRunner:</span>
+      </p>
+      <ul class="features" data-l="ru">
+        <li><strong>Готовый релиз</strong> — скачайте сборку со <a href="https://github.com/SerZhyAle/OneClickRunner/releases">страницы релизов</a>, распакуйте и запустите <code>OneClickRunner.exe</code>. Нужна среда выполнения .NET 8 (сборка framework-dependent).</li>
+        <li><strong>Сборка из исходников</strong> — команды ниже.</li>
+      </ul>
+      <ul class="features" data-l="en">
+        <li><strong>Prebuilt release</strong> — download from the <a href="https://github.com/SerZhyAle/OneClickRunner/releases">Releases page</a>, extract and run <code>OneClickRunner.exe</code>. Needs the .NET 8 runtime (framework-dependent build).</li>
+        <li><strong>Build from source</strong> — commands below.</li>
+      </ul>
+      <ul class="features" data-l="ua">
+        <li><strong>Готовий реліз</strong> — завантажте збірку зі <a href="https://github.com/SerZhyAle/OneClickRunner/releases">сторінки релізів</a>, розпакуйте та запустіть <code>OneClickRunner.exe</code>. Потрібне середовище виконання .NET 8 (збірка framework-dependent).</li>
+        <li><strong>Збірка з вихідників</strong> — команди нижче.</li>
+      </ul>
+      <pre class="code"><span class="tok">dotnet</span> build -c Release
+<span class="tok">dotnet</span> run --project OneClickRunner</pre>
+      <p style="margin-top:1rem">
+        <span data-l="ru"><strong>Требования:</strong> Windows 10 или 11, среда выполнения .NET 8.0.</span>
+        <span data-l="en"><strong>Requirements:</strong> Windows 10 or 11, the .NET 8.0 runtime.</span>
+        <span data-l="ua"><strong>Вимоги:</strong> Windows 10 або 11, середовище виконання .NET 8.0.</span>
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="tools-grid">
+        <a href="https://serzhyale.github.io/FastMediaSorter_mob_v2/"><b>FastMediaSorter v2</b><span>Android media sorter</span></a>
+        <a href="https://serzhyale.github.io/FastMediaSorter_Lite/"><b>FastMediaSorter LITE</b><span>Windows media sorter</span></a>
+        <a href="https://serzhyale.github.io/CyrFlip/"><b>CyrFlip</b><span>Fix wrong-layout typing</span></a>
+        <a href="https://serzhyale.github.io/doc-html-translate/"><b>doc-html-translate</b><span>Windows ebook converter</span></a>
+        <a href="https://serzhyale.github.io/FileDO/"><b>FileDO</b><span>Windows storage CLI</span></a>
+        <a href="https://sza.od.ua"><b>SZA</b><span>Portfolio hub</span></a>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Serhii Zhyhunenko · MIT</span>
+        <span><a href="https://sza.od.ua">sza.od.ua</a> · <a href="https://github.com/SerZhyAle/OneClickRunner">GitHub</a> · <a href="mailto:sza@ukr.net">sza@ukr.net</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <button class="to-top" id="toTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+  <script>
+  (function(){
+    var doc=document.documentElement;
+
+    /* ---- metadata per language ---- */
+    var META={
+      ru:{title:"OneClickRunner — запуск приложений и скриптов в один клик (Windows)",desc:"Лёгкий лаунчер для Windows: запускает ваши приложения, batch, PowerShell, Python и VBScript в один клик из списка переходов на панели задач."},
+      en:{title:"OneClickRunner — launch your apps & scripts in one click on Windows",desc:"A lightweight Windows launcher that runs your apps, batch, PowerShell, Python and VBScript scenarios in a single click from the taskbar Jump List."},
+      ua:{title:"OneClickRunner — запуск застосунків і скриптів в один клік (Windows)",desc:"Легкий лаунчер для Windows: запускає ваші застосунки, batch, PowerShell, Python та VBScript в один клік зі списку переходів на панелі завдань."}
+    };
+    var descEl=document.querySelector('meta[name="description"]');
+
+    function setLang(l){
+      doc.setAttribute('data-lang',l);
+      doc.setAttribute('lang', l==='ua'?'uk':l);
+      try{localStorage.setItem('sza-lang',l);}catch(e){}
+      var m=META[l]||META.en;
+      document.title=m.title;
+      if(descEl)descEl.setAttribute('content',m.desc);
+      document.querySelectorAll('.seg button[data-lang]').forEach(function(b){
+        b.setAttribute('aria-pressed', b.getAttribute('data-lang')===l?'true':'false');
+      });
+    }
+    document.querySelectorAll('.seg button[data-lang]').forEach(function(b){
+      b.addEventListener('click',function(){setLang(b.getAttribute('data-lang'));});
+    });
+    setLang(doc.getAttribute('data-lang')||'en');
+
+    /* ---- theme toggle ---- */
+    var themeBtn=document.getElementById('themeBtn');
+    var themeColor=document.querySelector('meta[name="theme-color"]');
+    function applyThemeMeta(){
+      var dark=doc.getAttribute('data-theme')!=='light';
+      if(themeColor)themeColor.setAttribute('content',dark?'#0a0f0a':'#eef3ea');
+      themeBtn.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme');
+    }
+    themeBtn.addEventListener('click',function(){
+      var next=doc.getAttribute('data-theme')==='light'?'dark':'light';
+      doc.setAttribute('data-theme',next);
+      try{localStorage.setItem('sza-theme',next);}catch(e){}
+      applyThemeMeta();
+    });
+    applyThemeMeta();
+
+    /* ---- copy buttons ---- */
+    document.querySelectorAll('.copy[data-copy]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var txt=btn.getAttribute('data-copy');
+        var done=function(){var o=btn.textContent;btn.textContent='✓ Copied';btn.classList.add('done');
+          setTimeout(function(){btn.textContent=o;btn.classList.remove('done');},1600);};
+        if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){fallback(txt,done);});}
+        else{fallback(txt,done);}
+      });
+    });
+    function fallback(txt,done){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){}document.body.removeChild(ta);}
+
+    /* ---- back-to-top visibility ---- */
+    var toTop=document.getElementById('toTop');
+    addEventListener('scroll',function(){toTop.classList.toggle('show',scrollY>500);},{passive:true});
+
+    /* ---- dynamic GitHub latest release ---- */
+    var gh=document.getElementById('ghDownload');
+    fetch('https://api.github.com/repos/SerZhyAle/OneClickRunner/releases/latest')
+      .then(function(r){return r.ok?r.json():Promise.reject();})
+      .then(function(d){
+        if(!d||!d.tag_name)return;
+        var asset=(d.assets||[]).filter(function(a){return /\.(zip|exe|msix)$/i.test(a.name);})[0];
+        gh.textContent='GitHub '+d.tag_name;
+        gh.href=asset?asset.browser_download_url:(d.html_url||gh.href);
+      })
+      .catch(function(){/* keep static fallback to /releases */});
+  })();
+  </script>
+</body>
+</html>

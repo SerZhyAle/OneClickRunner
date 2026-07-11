@@ -18,7 +18,6 @@ public partial class App : Application
     
     private MainWindow? _mainWindow;
     private ConfigurationService? _configService;
-    private System.IO.Pipes.NamedPipeServerStream? _pipeServer;
     private System.Threading.Tasks.Task? _pipeListenerTask;
 
     private void HandleCommandLineArgs(string[] args)
@@ -277,44 +276,6 @@ public partial class App : Application
         });
     }
 
-    private void StartPipeServer()
-    {
-        try
-        {
-            LoggingService.Log("Starting named pipe server");
-            _pipeServer = new System.IO.Pipes.NamedPipeServerStream(PipeName, System.IO.Pipes.PipeDirection.InOut, 1, System.IO.Pipes.PipeTransmissionMode.Message, System.IO.Pipes.PipeOptions.Asynchronous);
-            
-            _pipeListenerTask = System.Threading.Tasks.Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    _pipeServer?.WaitForConnection();
-                    LoggingService.Log("Named pipe client connected");
-
-                    using (var reader = new System.IO.StreamReader(_pipeServer))
-                    using (var writer = new System.IO.StreamWriter(_pipeServer) { AutoFlush = true })
-                    {
-                        string? line;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            LoggingService.Log($"Received command from pipe: {line}");
-                            // Handle commands received from the pipe
-                            HandleCommandLineArgs(line.Split(' '));
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LoggingService.Log($"Error in pipe listener task: {ex.Message}\n{ex.StackTrace}");
-                }
-            }, System.Threading.Tasks.TaskCreationOptions.LongRunning);
-        }
-        catch (Exception ex)
-        {
-            LoggingService.Log($"Error starting named pipe server: {ex.Message}\n{ex.StackTrace}");
-        }
-    }
-
     private void BuildJumpList()
     {
         try
@@ -391,16 +352,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         LoggingService.Log($"Application OnExit called with exit code: {e.ApplicationExitCode}");
-        
-        if (_pipeServer != null)
-        {
-            try
-            {
-                _pipeServer.Dispose();
-            }
-            catch { }
-        }
-        
+
         if (_mutex != null)
         {
             _mutex.ReleaseMutex();

@@ -1,50 +1,59 @@
 # OneClickRunner
-Windows application to run anything by one click
+
+Windows app to launch your apps and scripts ("scenarios") in one click from the Windows
+taskbar Jump List.
 
 ## Features
 
-- **System Tray Integration**: Runs minimized in the Windows system tray
-- **Quick Access**: Right-click the tray icon to see and run your configured applications/scripts
-- **Easy Configuration**: Left-click the tray icon to open settings
-- **Windows Autostart**: Option to start automatically with Windows
-- **Flexible Execution**: Run any executable, batch file, or PowerShell script
+- **Taskbar Jump List launcher**: right-click the OneClickRunner taskbar icon to run any
+  configured scenario, or open Settings / Exit.
+- **Settings window**: add, import, edit, clone, and remove scenarios.
+- **Flexible execution**: run any executable, batch, PowerShell, Python, or VBScript file,
+  with optional arguments and working directory.
+- **Per-scenario admin**: mark a scenario to run elevated.
+- **Windows autostart**: optionally start with Windows (runs minimized).
 
-## How to Use
+## How it works
 
-### Installation
-1. Build the application using Visual Studio or .NET CLI:
-   ```bash
-   dotnet build -c Release
-   ```
-2. Run the executable from `bin/Release/net8.0-windows/OneClickRunner.exe`
+- **The launcher UI is the Jump List**, not a system tray. Each scenario becomes a task on
+  the taskbar Jump List (right-click the taskbar icon). Clicking a task launches that scenario.
+- **Single instance**: one running instance handles everything; launching a Jump List task
+  forwards the command to it over a named pipe.
 
-### First Time Setup
-1. The application will start minimized in the system tray (notification area)
-2. Left-click the tray icon to open the settings window
-3. Click "Add" to add your first application or script
-4. Fill in the details:
-   - **Name**: Display name for the application
-   - **Path**: Full path to the executable or script
-   - **Arguments** (optional): Command-line arguments
-   - **Working Directory** (optional): Starting directory for the application
-5. Enable "Start OneClickRunner when Windows starts" to run on startup
+## How to use
 
-### Running Applications
-1. Right-click the OneClickRunner icon in the system tray
-2. Select the application or script you want to run from the menu
-3. The application will start immediately
+### Build
 
-### Managing Applications
-- **Add**: Click "Add" button to add new applications/scripts
-- **Edit**: Select an item and click "Edit" to modify it
-- **Remove**: Select an item and click "Remove" to delete it
+```bash
+dotnet build -c Release
+```
 
-## System Requirements
-- Windows 11 (or Windows 10)
-- .NET 8.0 Runtime
+Run `OneClickRunner/bin/Release/net8.0-windows/OneClickRunner.exe`, or from source:
 
-## Technical Details
-- Built with WPF and .NET 8.0
-- Configuration stored in: `%APPDATA%\OneClickRunner\config.json`
-- Autostart configured via Windows Registry
+```bash
+dotnet run --project OneClickRunner
+```
 
+### First run
+
+The app opens the Settings window (on a brand-new install it seeds a sample "Calculator"
+scenario). Add your own scenarios, then find them on the taskbar Jump List.
+
+### Manage scenarios
+
+- **Add** - create a scenario (Name, Path, optional Arguments / Working Directory, Run as Admin).
+- **Import** - bring a scenario in from an `.xml` file.
+- **Run** - launch the selected scenario (or double-click it).
+- **Edit / Clone / Remove** - modify, duplicate, or delete the selected scenario.
+
+Autostart is toggled in the Settings window ("Start OneClickRunner when Windows starts").
+
+## Storage
+
+Each scenario is stored as its own XML file under `%APPDATA%\OneClickRunner\Scenarios\`.
+Activity is logged to `%APPDATA%\OneClickRunner\activity.log`.
+
+## Requirements
+
+- Windows 10 or 11
+- .NET 8.0 Runtime (framework-dependent build)

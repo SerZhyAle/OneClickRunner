@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 using System.Xml.Serialization;
 using OneClickRunner.Models;
 
@@ -13,6 +12,7 @@ namespace OneClickRunner.Services;
 public class ConfigurationService
 {
     private readonly string _scenariosPath;
+    private readonly string _seedMarkerPath;
     private List<AppItem> _appItems;
 
     public ConfigurationService()
@@ -22,6 +22,7 @@ public class ConfigurationService
         Directory.CreateDirectory(appFolder);
         _scenariosPath = Path.Combine(appFolder, "Scenarios");
         Directory.CreateDirectory(_scenariosPath);
+        _seedMarkerPath = Path.Combine(appFolder, ".initialized");
         _appItems = new List<AppItem>();
         LoadConfiguration();
     }
@@ -85,12 +86,13 @@ public class ConfigurationService
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error loading {file}: {ex.Message}");
+                LoggingService.Log($"Error loading {file}: {ex.Message}");
             }
         }
 
-        // Add default calculator scenario if no items exist
-        if (_appItems.Count == 0)
+        // Seed the sample scenario only on the very first run, not every time the folder is
+        // empty - so a user who deletes every scenario keeps an empty list.
+        if (_appItems.Count == 0 && !File.Exists(_seedMarkerPath))
         {
             var calc = new AppItem
             {
@@ -102,6 +104,23 @@ public class ConfigurationService
             };
             _appItems.Add(calc);
             SaveItem(calc);
+        }
+
+        MarkInitialized();
+    }
+
+    private void MarkInitialized()
+    {
+        try
+        {
+            if (!File.Exists(_seedMarkerPath))
+            {
+                File.WriteAllText(_seedMarkerPath, DateTime.Now.ToString("o"));
+            }
+        }
+        catch (Exception ex)
+        {
+            LoggingService.Log($"Error writing init marker: {ex.Message}");
         }
     }
 
@@ -116,7 +135,7 @@ public class ConfigurationService
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error saving {item.Filename}: {ex.Message}");
+            LoggingService.Log($"Error saving {item.Filename}: {ex.Message}");
         }
     }
 }
