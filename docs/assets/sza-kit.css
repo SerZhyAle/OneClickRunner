@@ -141,15 +141,24 @@ html[data-theme="light"] .btn-ghost{background:rgba(16,40,20,.03)}
 .card:hover{transform:translateY(-4px);border-color:var(--border-hover);background:var(--card-hover)}
 
 /* ---------- NUMBERED COLLAPSIBLE SECTIONS (TOC-as-content) ---------- */
+/* .sections is the 2-up grid; each card is a <details class="sec"> that spans
+   full width once opened, so the toolbar's "expand all" doesn't wreck the grid. */
+.sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:start}
+@media(max-width:760px){.sections{grid-template-columns:1fr}}
 details.sec{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
   backdrop-filter:blur(12px);padding:0 1.3rem;margin-bottom:1rem;scroll-margin-top:80px}
-details.sec[open]{border-color:var(--border-hover)}
-details.sec>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:.8rem;padding:1.1rem 0;font-family:var(--font-heading);font-weight:700;font-size:1.05rem}
+details.sec[open]{border-color:var(--border-hover);grid-column:1/-1}
+details.sec>summary{list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:.8rem;padding:1.1rem 0;font-family:var(--font-heading);font-weight:700;font-size:1.05rem}
 details.sec>summary::-webkit-details-marker{display:none}
 details.sec>summary::after{content:"▸";margin-left:auto;color:var(--muted);transition:transform .2s}
 details.sec[open]>summary::after{transform:rotate(90deg)}
-.secnum{font-family:var(--font-heading);font-weight:800;font-size:.8rem;color:var(--acc);font-variant-numeric:tabular-nums;min-width:2ch}
+.secnum{font-family:var(--font-heading);font-weight:800;font-size:.8rem;color:var(--acc);font-variant-numeric:tabular-nums;min-width:2ch;line-height:1.5}
+.sechead{display:flex;flex-direction:column;gap:.2rem;min-width:0}
+.sectitle{margin:0}
+.secteaser{color:var(--muted);font-size:.82rem;font-weight:400;font-family:var(--font-body);line-height:1.4}
+details.sec[open] .secteaser{display:none}
 details.sec>*:not(summary){margin-bottom:1.1rem}
+.toolbar{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
 
 /* ---------- COPY-TO-CLIPBOARD BOX (commands; contact info on hub) ---------- */
 .copybox{position:relative;background:var(--code-bg);border:1px solid var(--border);border-radius:var(--radius-sm);

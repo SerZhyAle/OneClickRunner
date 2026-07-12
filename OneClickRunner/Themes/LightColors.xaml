@@ -10,4 +10,6 @@
     <SolidColorBrush x:Key="ListBackgroundBrush" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="#ECECEC"/>
     <SolidColorBrush x:Key="AccentBrush" Color="#0078D4"/>
+    <SolidColorBrush x:Key="SelectionBackgroundBrush" Color="#CCE4F7"/>
+    <SolidColorBrush x:Key="SelectionForegroundBrush" Color="#000000"/>
 </ResourceDictionary>

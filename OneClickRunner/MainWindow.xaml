@@ -40,6 +40,13 @@
                 <Style TargetType="ListViewItem">
                     <!-- Select the row under the cursor before the context menu opens. -->
                     <EventSetter Event="PreviewMouseRightButtonDown" Handler="ListViewItem_PreviewMouseRightButtonDown"/>
+                    <!-- Default (system Highlight/Control) selection colors ignore the app theme
+                         and can render near-white-on-white; force a themed, always-readable pair. -->
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource SelectionBackgroundBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ContextMenu>

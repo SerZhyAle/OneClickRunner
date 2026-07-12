@@ -13,6 +13,18 @@
     -->
     <Style TargetType="TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <!--
+          Cell TextBlocks don't inherit ListViewItem.Foreground - a Style Setter always beats
+          inherited values, so the base Setter above wins unless overridden here explicitly. This
+          trigger keeps selected-row text readable against SelectionBackgroundBrush (see
+          AppListView's ItemContainerStyle). Harmless no-op for TextBlocks with no ListViewItem
+          ancestor.
+        -->
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=IsSelected}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource SelectionForegroundBrush}"/>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="Label">

@@ -8,6 +8,14 @@ html[data-lang="ru"] [data-l]:not([data-l="ru"]) { display: none; }
 html[data-lang="en"] [data-l]:not([data-l="en"]) { display: none; }
 html[data-lang="ua"] [data-l]:not([data-l="ua"]) { display: none; }
 
+/* ── Wider stage: headings/content use more of the screen (fewer
+   wrapped lines), tighter vertical rhythm (less scrolling). ────── */
+:root { --wide: min(96vw, 1600px); }
+.hero { padding: 1.4rem 1rem 1rem; }
+.hero .lead { max-width: 760px; }
+.get { margin: 1rem auto 1.25rem; }
+.site-footer { margin-top: 2rem; padding: 1.5rem 0; }
+
 /* ── Hero logo mark = the app icon itself (self-contained badge). ── */
 .hero-mark {
   display: block; width: 96px; height: 96px; margin: 0 auto 1.1rem;
@@ -20,16 +28,9 @@ html[data-lang="ua"] [data-l]:not([data-l="ua"]) { display: none; }
 /* ── Hero button row. ───────────────────────────────────────────── */
 .button-group { display: flex; flex-wrap: wrap; justify-content: center; gap: .7rem; }
 
-/* ── Section headings get the subtle divider the SZA sites use. ──── */
-.section-card h2 {
-  display: flex; align-items: center; gap: .75rem;
-  font-size: 1.35rem; font-weight: 700; margin-bottom: 1rem;
-}
-.section-card h2::after {
-  content: ""; flex: 1; height: 1px;
-  background: linear-gradient(90deg, var(--border), transparent);
-}
-.section-card > p { color: var(--text-2); }
+/* ── Numbered accordion sections: title styling + body text color. ── */
+.sectitle { font-size: 1.05rem; }
+.secbody > p { color: var(--text-2); }
 
 /* ── Step / feature lists with green markers. ───────────────────── */
 ol.steps { padding-left: 1.3rem; margin: 0; color: var(--text-2); }
@@ -43,7 +44,7 @@ ul.features li::before {
 }
 
 /* ── Feature grid (icon cards inside a section). ────────────────── */
-.feat-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.feat-grid { display: grid; grid-template-columns: 1fr; gap: .8rem; }
 @media (min-width: 700px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
 .feat {
   display: flex; gap: .9rem; align-items: flex-start;

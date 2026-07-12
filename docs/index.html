@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OneClickRunner — launch your apps &amp; scripts in one click on Windows</title>
+  <title>One Click Runner — launch your apps &amp; scripts in one click on Windows</title>
   <meta name="description" content="A lightweight Windows launcher that runs your apps, batch, PowerShell, Python and VBScript scenarios in a single click from the taskbar Jump List — with per-scenario arguments, working directory, admin rights and Windows autostart." />
   <meta name="theme-color" content="#0a0f0a" />
-  <meta property="og:title" content="OneClickRunner" />
+  <meta property="og:title" content="One Click Runner" />
   <meta property="og:description" content="Launch your apps and scripts in one click from the Windows taskbar Jump List." />
   <meta property="og:image" content="https://raw.githubusercontent.com/SerZhyAle/OneClickRunner/main/docs/assets/social-preview.png" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -39,7 +39,7 @@
   </div>
 
   <header class="site-header">
-    <span class="brand">OneClickRunner<span class="dot">.</span></span>
+    <span class="brand">One&nbsp;Click&nbsp;Runner<span class="dot">.</span></span>
     <div class="seg" role="group" aria-label="Language">
       <button data-lang="ru">RU</button><button data-lang="en">EN</button><button data-lang="ua">UA</button>
     </div>
@@ -52,9 +52,9 @@
   <main class="container">
     <!-- HERO -->
     <section class="hero">
-      <img class="hero-mark" src="assets/icon-256.png" width="96" height="96" alt="OneClickRunner icon — a list of commands with a click cursor" />
+      <img class="hero-mark" src="assets/icon-256.png" width="96" height="96" alt="One Click Runner icon — a list of commands with a click cursor" />
 
-      <h1>OneClickRunner</h1>
+      <h1>One&nbsp;Click&nbsp;Runner</h1>
       <p class="lead">
         <span data-l="ru">Запускайте свои приложения и скрипты в один клик — прямо из списка переходов (Jump List) на панели задач Windows.</span>
         <span data-l="en">Launch your apps and scripts in a single click — straight from the Windows taskbar Jump List.</span>
@@ -63,8 +63,9 @@
       <div class="pills" style="justify-content:center">
         <span class="pill">Windows 10 / 11</span>
         <span class="pill">.NET 8</span>
-        <span class="pill">Jump List</span>
+        <span class="pill">Jump List + Tray</span>
         <span class="pill">EXE · BAT · PS1 · PY · VBS</span>
+        <span class="pill">Light / Dark</span>
       </div>
       <div class="button-group" style="justify-content:center;margin-top:1.2rem">
         <a class="btn btn-primary" href="#get">
@@ -110,17 +111,46 @@
       </ol>
     </section>
 
+    <div class="toolbar">
+      <button class="btn btn-ghost btn-sm" type="button" onclick="setAll(true)">
+        <span data-l="ru">Развернуть все разделы</span><span data-l="en">Expand all sections</span><span data-l="ua">Розгорнути всі розділи</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" type="button" onclick="setAll(false)">
+        <span data-l="ru">Свернуть всё</span><span data-l="en">Collapse all</span><span data-l="ua">Згорнути все</span>
+      </button>
+    </div>
+
+    <div class="sections">
+
     <!-- WHAT IT DOES -->
-    <section class="card section-card">
-      <h2><span data-l="ru">Что это</span><span data-l="en">What it does</span><span data-l="ua">Що це</span></h2>
-      <p data-l="ru"><strong>Список переходов становится вашей панелью запуска.</strong> Каждый сценарий превращается в задачу в Jump List на панели задач Windows — клик по ней запускает сценарий. Приложение работает в одном экземпляре: клик по задаче передаёт команду уже запущенному экземпляру через именованный канал, поэтому запуск мгновенный и без второго окна.</p>
-      <p data-l="en"><strong>The Jump List becomes your launch panel.</strong> Each scenario turns into a task on the Windows taskbar Jump List — clicking it launches that scenario. The app runs as a single instance: clicking a task forwards the command to the already-running instance over a named pipe, so launches are instant and never open a second window.</p>
-      <p data-l="ua"><strong>Список переходів стає вашою панеллю запуску.</strong> Кожен сценарій перетворюється на задачу в Jump List на панелі завдань Windows — клік по ній запускає сценарій. Застосунок працює в одному екземплярі: клік по задачі передає команду вже запущеному екземпляру через іменований канал, тож запуск миттєвий і без другого вікна.</p>
-    </section>
+    <details class="sec" open>
+      <summary>
+        <span class="secnum" aria-hidden="true">01</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Что это</span><span data-l="en">What it does</span><span data-l="ua">Що це</span></span>
+          <span class="secteaser"><span data-l="ru">Jump List и трей — панели запуска; права решает только флаг сценария.</span><span data-l="en">Jump List and tray are the launch panels; elevation is per-scenario only.</span><span data-l="ua">Jump List і трей — панелі запуску; права вирішує лише прапорець сценарію.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
+      <p data-l="ru"><strong>Список переходов и значок в трее — ваши панели запуска.</strong> Каждый сценарий превращается в задачу в Jump List на панели задач Windows и в пункт меню значка в системном трее — клик по любому из них запускает сценарий. Приложение работает строго в одном экземпляре: повторный запуск передаёт команду уже запущенному экземпляру через именованный канал (и выводит его окно), поэтому запуск мгновенный и без второго окна.</p>
+      <p data-l="en"><strong>The Jump List and the tray icon are your launch panels.</strong> Each scenario becomes a task on the Windows taskbar Jump List and an entry in the system-tray menu — activating either one launches that scenario. The app runs strictly as a single instance: a repeat launch forwards the command to the already-running instance over a named pipe (and surfaces its window), so launches are instant and never open a second window.</p>
+      <p data-l="ua"><strong>Список переходів і значок у треї — ваші панелі запуску.</strong> Кожен сценарій перетворюється на задачу в Jump List на панелі завдань Windows і на пункт меню значка в системному треї — активація будь-якого з них запускає сценарій. Застосунок працює суворо в одному екземплярі: повторний запуск передає команду вже запущеному екземпляру через іменований канал (і виводить його вікно), тож запуск миттєвий і без другого вікна.</p>
+      <p data-l="ru">Права администратора решаются <strong>только</strong> флагом «Run as Admin» сценария — одинаково при любом способе запуска, без неожиданных запросов UAC.</p>
+      <p data-l="en">Elevation is decided <strong>solely</strong> by a scenario's "Run as Admin" flag — the same from every launch surface, with no surprise UAC prompts.</p>
+      <p data-l="ua">Права адміністратора вирішуються <strong>лише</strong> прапорцем «Run as Admin» сценарію — однаково за будь-якого способу запуску, без несподіваних запитів UAC.</p>
+      </div>
+    </details>
 
     <!-- FEATURES -->
-    <section class="card section-card">
-      <h2><span data-l="ru">Возможности</span><span data-l="en">Features</span><span data-l="ua">Можливості</span></h2>
+    <details class="sec">
+      <summary>
+        <span class="secnum" aria-hidden="true">02</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Возможности</span><span data-l="en">Features</span><span data-l="ua">Можливості</span></span>
+          <span class="secteaser"><span data-l="ru">Девять возможностей: от Jump List до тем оформления.</span><span data-l="en">Nine capabilities, from the Jump List to light/dark theming.</span><span data-l="ua">Дев'ять можливостей: від Jump List до тем оформлення.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
       <div class="feat-grid">
         <div class="feat">
           <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
@@ -162,9 +192,9 @@
           <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg></span>
           <div>
             <h3 data-l="ru">Управление сценариями</h3><h3 data-l="en">Manage scenarios</h3><h3 data-l="ua">Керування сценаріями</h3>
-            <p data-l="ru">Добавляйте, импортируйте, редактируйте, клонируйте и удаляйте — в окне настроек.</p>
-            <p data-l="en">Add, import, edit, clone and remove — all from the Settings window.</p>
-            <p data-l="ua">Додавайте, імпортуйте, редагуйте, клонуйте та видаляйте — у вікні налаштувань.</p>
+            <p data-l="ru">Добавляйте, импортируйте, экспортируйте, редактируйте, клонируйте, удаляйте, меняйте порядок (↑/↓) и фильтруйте поиском. Правый клик по строке — контекстное меню; Enter — запуск, F2 — правка, Del — удаление.</p>
+            <p data-l="en">Add, import, export, edit, clone, remove, reorder (↑/↓) and filter by search. Right-click a row for a context menu; Enter runs, F2 edits, Del removes.</p>
+            <p data-l="ua">Додавайте, імпортуйте, експортуйте, редагуйте, клонуйте, видаляйте, змінюйте порядок (↑/↓) та фільтруйте пошуком. Правий клік по рядку — контекстне меню; Enter — запуск, F2 — правка, Del — видалення.</p>
           </div>
         </div>
         <div class="feat">
@@ -176,29 +206,67 @@
             <p data-l="ua">Кожен сценарій — окремий XML-файл, який легко експортувати та імпортувати.</p>
           </div>
         </div>
+        <div class="feat">
+          <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+          <div>
+            <h3 data-l="ru">Значок в трее</h3><h3 data-l="en">System tray icon</h3><h3 data-l="ua">Значок у треї</h3>
+            <p data-l="ru">Двойной клик — открыть настройки, правый клик — те же сценарии, что и в Jump List, плюс Настройки и Выход.</p>
+            <p data-l="en">Double-click to open Settings, right-click for the same scenarios as the Jump List, plus Settings and Exit.</p>
+            <p data-l="ua">Подвійний клік — відкрити налаштування, правий клік — ті самі сценарії, що й у Jump List, плюс Налаштування та Вихід.</p>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+          <div>
+            <h3 data-l="ru">Загрузки через yt-dlp</h3><h3 data-l="en">yt-dlp downloads</h3><h3 data-l="ua">Завантаження через yt-dlp</h3>
+            <p data-l="ru">Отдельный тип сценария: выбираете папку и опции, а ссылку вводите при запуске. Ссылка передаётся безопасно, без разбора командной оболочкой.</p>
+            <p data-l="en">A dedicated scenario type: pick an output folder and options, and enter the link at run time. The link is passed safely, never parsed by a shell.</p>
+            <p data-l="ua">Окремий тип сценарію: обираєте теку та опції, а посилання вводите під час запуску. Посилання передається безпечно, без розбору командною оболонкою.</p>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/></svg></span>
+          <div>
+            <h3 data-l="ru">Светлая / тёмная тема</h3><h3 data-l="en">Light / dark theme</h3><h3 data-l="ua">Світла / темна тема</h3>
+            <p data-l="ru">Следует за темой Windows и переключается вместе с ней. Иконки в списке берутся из самих EXE сценариев.</p>
+            <p data-l="en">Follows the Windows theme and switches with it. List icons are taken from the scenarios' own EXE files.</p>
+            <p data-l="ua">Слідує за темою Windows і перемикається разом із нею. Іконки у списку беруться із самих EXE сценаріїв.</p>
+          </div>
+        </div>
       </div>
-    </section>
+      </div>
+    </details>
 
     <!-- HOW TO USE -->
-    <section class="card section-card">
-      <h2><span data-l="ru">Как пользоваться</span><span data-l="en">How to use</span><span data-l="ua">Як користуватися</span></h2>
+    <details class="sec">
+      <summary>
+        <span class="secnum" aria-hidden="true">03</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Как пользоваться</span><span data-l="en">How to use</span><span data-l="ua">Як користуватися</span></span>
+          <span class="secteaser"><span data-l="ru">От первого запуска до горячих клавиш — пять шагов.</span><span data-l="en">From first launch to keyboard shortcuts — five steps.</span><span data-l="ua">Від першого запуску до гарячих клавіш — п'ять кроків.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
       <ol class="steps" data-l="ru">
         <li>Запустите приложение — при первом запуске оно создаёт пример сценария «Calculator» и открывает окно настроек.</li>
-        <li>Нажмите <strong>Add</strong> и укажите имя, путь и, при необходимости, аргументы, рабочую папку и «Run as Admin».</li>
-        <li>Закройте окно — приложение продолжит работать свёрнутым, а сценарий появится в списке переходов.</li>
-        <li>Правый клик по значку на панели задач → выберите сценарий, чтобы запустить его в один клик.</li>
+        <li>Нажмите <strong>Add</strong>, выберите тип (обычное приложение/скрипт или загрузка yt-dlp), укажите имя, путь и, при необходимости, аргументы, рабочую папку и «Run as Admin».</li>
+        <li>Закройте окно — приложение продолжит работать свёрнутым; сценарий появится в списке переходов и в меню значка в трее.</li>
+        <li>Правый клик по значку на панели задач (или в трее) → выберите сценарий, чтобы запустить его в один клик.</li>
+        <li>Прямо в окне настроек: двойной клик по строке или <strong>Enter</strong> — запуск, <strong>F2</strong> — правка, <strong>Del</strong> — удаление; строка «Search» фильтрует список.</li>
       </ol>
       <ol class="steps" data-l="en">
         <li>Launch the app — on first run it seeds a sample "Calculator" scenario and opens the Settings window.</li>
-        <li>Click <strong>Add</strong> and set the name, path and — if needed — arguments, working directory and "Run as Admin".</li>
-        <li>Close the window — the app keeps running minimized, and the scenario appears on the Jump List.</li>
-        <li>Right-click the taskbar icon → pick a scenario to launch it in one click.</li>
+        <li>Click <strong>Add</strong>, choose the type (a normal app/script or a yt-dlp download), and set the name, path and — if needed — arguments, working directory and "Run as Admin".</li>
+        <li>Close the window — the app keeps running minimized; the scenario appears on the Jump List and in the tray menu.</li>
+        <li>Right-click the taskbar icon (or the tray icon) → pick a scenario to launch it in one click.</li>
+        <li>Right in the Settings window: double-click a row or press <strong>Enter</strong> to run, <strong>F2</strong> to edit, <strong>Del</strong> to remove; the "Search" box filters the list.</li>
       </ol>
       <ol class="steps" data-l="ua">
         <li>Запустіть застосунок — під час першого запуску він створює приклад сценарію «Calculator» і відкриває вікно налаштувань.</li>
-        <li>Натисніть <strong>Add</strong> і вкажіть ім'я, шлях і, за потреби, аргументи, робочу теку та «Run as Admin».</li>
-        <li>Закрийте вікно — застосунок продовжить працювати згорнутим, а сценарій з'явиться у списку переходів.</li>
-        <li>Правий клік по значку на панелі завдань → оберіть сценарій, щоб запустити його в один клік.</li>
+        <li>Натисніть <strong>Add</strong>, оберіть тип (звичайний застосунок/скрипт або завантаження yt-dlp), вкажіть ім'я, шлях і, за потреби, аргументи, робочу теку та «Run as Admin».</li>
+        <li>Закрийте вікно — застосунок продовжить працювати згорнутим; сценарій з'явиться у списку переходів і в меню значка в треї.</li>
+        <li>Правий клік по значку на панелі завдань (або у треї) → оберіть сценарій, щоб запустити його в один клік.</li>
+        <li>Прямо у вікні налаштувань: подвійний клік по рядку або <strong>Enter</strong> — запуск, <strong>F2</strong> — правка, <strong>Del</strong> — видалення; поле «Search» фільтрує список.</li>
       </ol>
       <div class="note">
         <span class="tag" data-l="ru">Заметка</span><span class="tag" data-l="en">Note</span><span class="tag" data-l="ua">Примітка</span>
@@ -206,15 +274,23 @@
         <p data-l="en">Scenarios are stored as individual XML files in <code>%APPDATA%\OneClickRunner\Scenarios\</code>, and actions are written to <code>%APPDATA%\OneClickRunner\activity.log</code>. Use <strong>Import</strong> to add a scenario from an <code>.xml</code> file.</p>
         <p data-l="ua">Сценарії зберігаються окремими XML-файлами в <code>%APPDATA%\OneClickRunner\Scenarios\</code>, а дії пишуться до <code>%APPDATA%\OneClickRunner\activity.log</code>. Кнопкою <strong>Import</strong> можна додати сценарій з <code>.xml</code>-файлу.</p>
       </div>
-    </section>
+      </div>
+    </details>
 
     <!-- INSTALL / BUILD -->
-    <section class="card section-card" id="install">
-      <h2><span data-l="ru">Установка</span><span data-l="en">Install</span><span data-l="ua">Встановлення</span></h2>
+    <details class="sec" id="install">
+      <summary>
+        <span class="secnum" aria-hidden="true">04</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Установка</span><span data-l="en">Install</span><span data-l="ua">Встановлення</span></span>
+          <span class="secteaser"><span data-l="ru">Готовый релиз или сборка из исходников — команды и требования.</span><span data-l="en">Prebuilt release or build from source — commands and requirements.</span><span data-l="ua">Готовий реліз або збірка з вихідників — команди та вимоги.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
       <p>
-        <span data-l="ru">Два способа получить OneClickRunner:</span>
-        <span data-l="en">Two ways to get OneClickRunner:</span>
-        <span data-l="ua">Два способи отримати OneClickRunner:</span>
+        <span data-l="ru">Два способа получить One Click Runner:</span>
+        <span data-l="en">Two ways to get One Click Runner:</span>
+        <span data-l="ua">Два способи отримати One Click Runner:</span>
       </p>
       <ul class="features" data-l="ru">
         <li><strong>Готовый релиз</strong> — скачайте сборку со <a href="https://github.com/SerZhyAle/OneClickRunner/releases">страницы релизов</a>, распакуйте и запустите <code>OneClickRunner.exe</code>. Нужна среда выполнения .NET 8 (сборка framework-dependent).</li>
@@ -235,7 +311,10 @@
         <span data-l="en"><strong>Requirements:</strong> Windows 10 or 11, the .NET 8.0 runtime.</span>
         <span data-l="ua"><strong>Вимоги:</strong> Windows 10 або 11, середовище виконання .NET 8.0.</span>
       </p>
-    </section>
+      </div>
+    </details>
+
+    </div>
   </main>
 
   <footer class="site-footer">
@@ -264,9 +343,9 @@
 
     /* ---- metadata per language ---- */
     var META={
-      ru:{title:"OneClickRunner — запуск приложений и скриптов в один клик (Windows)",desc:"Лёгкий лаунчер для Windows: запускает ваши приложения, batch, PowerShell, Python и VBScript в один клик из списка переходов на панели задач."},
-      en:{title:"OneClickRunner — launch your apps & scripts in one click on Windows",desc:"A lightweight Windows launcher that runs your apps, batch, PowerShell, Python and VBScript scenarios in a single click from the taskbar Jump List."},
-      ua:{title:"OneClickRunner — запуск застосунків і скриптів в один клік (Windows)",desc:"Легкий лаунчер для Windows: запускає ваші застосунки, batch, PowerShell, Python та VBScript в один клік зі списку переходів на панелі завдань."}
+      ru:{title:"One Click Runner — запуск приложений и скриптов в один клик (Windows)",desc:"Лёгкий лаунчер для Windows: запускает ваши приложения, batch, PowerShell, Python и VBScript в один клик из списка переходов на панели задач."},
+      en:{title:"One Click Runner — launch your apps & scripts in one click on Windows",desc:"A lightweight Windows launcher that runs your apps, batch, PowerShell, Python and VBScript scenarios in a single click from the taskbar Jump List."},
+      ua:{title:"One Click Runner — запуск застосунків і скриптів в один клік (Windows)",desc:"Легкий лаунчер для Windows: запускає ваші застосунки, batch, PowerShell, Python та VBScript в один клік зі списку переходів на панелі завдань."}
     };
     var descEl=document.querySelector('meta[name="description"]');
 
@@ -330,6 +409,18 @@
         gh.href=asset?asset.browser_download_url:(d.html_url||gh.href);
       })
       .catch(function(){/* keep static fallback to /releases */});
+
+    /* ---- expand/collapse-all for the numbered sections ---- */
+    window.setAll=function(open){
+      document.querySelectorAll('details.sec').forEach(function(d){
+        if(open)d.setAttribute('open','');else d.removeAttribute('open');
+      });
+    };
+    if(location.hash){
+      var target=document.getElementById(location.hash.slice(1));
+      var sec=target&&target.closest?target.closest('details.sec'):null;
+      if(sec)sec.setAttribute('open','');
+    }
   })();
   </script>
 </body>
