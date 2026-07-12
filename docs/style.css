@@ -8,13 +8,37 @@ html[data-lang="ru"] [data-l]:not([data-l="ru"]) { display: none; }
 html[data-lang="en"] [data-l]:not([data-l="en"]) { display: none; }
 html[data-lang="ua"] [data-l]:not([data-l="ua"]) { display: none; }
 
-/* ── Wider stage: headings/content use more of the screen (fewer
-   wrapped lines), tighter vertical rhythm (less scrolling). ────── */
-:root { --wide: min(96vw, 1600px); }
+/* ── Wider stage: no fixed pixel ceiling — the page fills the actual
+   viewport (a thin 3vw gutter) on every monitor, small or ultrawide,
+   instead of stalling at a fixed column once the window passes ~1600px. ── */
+:root { --wide: 97vw; }
 .hero { padding: 1.4rem 1rem 1rem; }
 .hero .lead { max-width: 760px; }
-.get { margin: 1rem auto 1.25rem; }
 .site-footer { margin-top: 2rem; padding: 1.5rem 0; }
+
+/* ── "Get it" card: the kit caps this at max-width:760px, which reads as a
+   narrow floating box once the page around it is wide. Let it fill the
+   container, and split it into two columns on wide screens (pitch/demo/
+   channels/copy on the left, the numbered quickstart beside it on the
+   right) so the extra width shortens the section instead of stretching
+   one paragraph edge to edge. ─────────────────────────────────────────── */
+.get { max-width: none; margin: 1rem auto 1.25rem; }
+.get .whatfor { max-width: 640px; }
+@media (min-width: 860px) {
+  .get { grid-template-columns: 1.15fr .85fr; column-gap: 2rem; align-items: start; }
+  .get > .whatfor, .get > .demo, .get > .channels, .get > .copybox { grid-column: 1; }
+  .get > .quickstart { grid-column: 2; grid-row: 1 / -1; align-self: stretch; margin-top: 0; }
+}
+
+/* ── Full-bleed sticky header: an edge-to-edge bar (background + bottom
+   border span the whole viewport), with its content centered in the same
+   --wide column as the rest of the page — not a floating inset pill. Uses
+   the full screen width and drops the pill's own top/side margins. ────── */
+.site-header {
+  display: block; max-width: none; margin: 0; padding: 0;
+  border: none; border-bottom: 1px solid var(--border); border-radius: 0;
+}
+.site-header .header-inner { display: flex; align-items: center; gap: 12px; padding: 10px 20px; }
 
 /* ── Hero logo mark = the app icon itself (self-contained badge). ── */
 .hero-mark {
@@ -46,6 +70,7 @@ ul.features li::before {
 /* ── Feature grid (icon cards inside a section). ────────────────── */
 .feat-grid { display: grid; grid-template-columns: 1fr; gap: .8rem; }
 @media (min-width: 700px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1080px) { .feat-grid { grid-template-columns: repeat(3, 1fr); } }
 .feat {
   display: flex; gap: .9rem; align-items: flex-start;
   padding: 1rem 1.1rem; border: 1px solid var(--border);
@@ -62,6 +87,10 @@ html[data-theme="light"] .feat { background: rgba(16,40,20,.02); }
 .feat .fi svg { width: 20px; height: 20px; }
 .feat h3 { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; margin: .1rem 0 .3rem; color: var(--text); }
 .feat p { color: var(--muted); font-size: .88rem; margin: 0; }
+
+/* ── Footer "more tools" grid: more columns on wide screens so the row of
+   links uses the full --wide column instead of stacking into extra rows. ── */
+@media (min-width: 1080px) { .tools-grid { grid-template-columns: repeat(4, 1fr); } }
 
 /* ── Inline code chips inside prose. ────────────────────────────── */
 :not(pre):not(.copybox) > code {
