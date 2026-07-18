@@ -40,13 +40,38 @@
                 <Style TargetType="ListViewItem">
                     <!-- Select the row under the cursor before the context menu opens. -->
                     <EventSetter Event="PreviewMouseRightButtonDown" Handler="ListViewItem_PreviewMouseRightButtonDown"/>
-                    <!-- Default (system Highlight/Control) selection colors ignore the app theme
-                         and can render near-white-on-white; force a themed, always-readable pair. -->
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource SelectionBackgroundBrush}"/>
-                        </Trigger>
-                    </Style.Triggers>
+                    <!--
+                      The stock GridView row template paints selection by setting its internal "Bd"
+                      border straight from SystemColors.Highlight/Control - a plain IsSelected
+                      Trigger on ListViewItem.Background is bypassed and has no effect, and the
+                      resulting color ignores the app's dark/light theme entirely (this is what
+                      made selected-row text unreadable). Re-templating with our own Triggers is
+                      the only reliable way to control it; see Styles.xaml for why the row text
+                      also needs its own trigger (Foreground doesn't inherit into the cells here).
+                    -->
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border x:Name="Bd" BorderThickness="{TemplateBinding BorderThickness}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        Background="{TemplateBinding Background}"
+                                        Padding="{TemplateBinding Padding}"
+                                        SnapsToDevicePixels="True">
+                                    <GridViewRowPresenter Content="{TemplateBinding Content}"
+                                                          Columns="{Binding RelativeSource={RelativeSource AncestorType=ListView}, Path=View.Columns}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlBackgroundBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SelectionBackgroundBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource SelectionForegroundBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ContextMenu>

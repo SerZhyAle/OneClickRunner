@@ -8,12 +8,9 @@ html[data-lang="ru"] [data-l]:not([data-l="ru"]) { display: none; }
 html[data-lang="en"] [data-l]:not([data-l="en"]) { display: none; }
 html[data-lang="ua"] [data-l]:not([data-l="ua"]) { display: none; }
 
-/* ── Wider stage: no fixed pixel ceiling — the page fills the actual
-   viewport (a thin 3vw gutter) on every monitor, small or ultrawide,
-   instead of stalling at a fixed column once the window passes ~1600px. ── */
-:root { --wide: 97vw; }
+/* ── Keep the shared kit's readable 1100px stage. ───────────────── */
 .hero { padding: 1.4rem 1rem 1rem; }
-.hero .lead { max-width: 760px; }
+.hero .lead { max-width: none; }
 .site-footer { margin-top: 2rem; padding: 1.5rem 0; }
 
 /* ── "Get it" card: the kit caps this at max-width:760px, which reads as a

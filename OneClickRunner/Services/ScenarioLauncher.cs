@@ -50,10 +50,13 @@ public static class ScenarioLauncher
 
         try
         {
+            // A script is handed to its interpreter rather than shell-executed: the shell can only
+            // start what the machine has an association for, which .ps1 never has. See ScriptInterpreter.
+            var isScript = ScriptInterpreter.TryResolve(item.Path, item.Arguments, out var interpreter, out var interpreterArgs);
             var startInfo = new ProcessStartInfo
             {
-                FileName = item.Path,
-                Arguments = item.Arguments,
+                FileName = isScript ? interpreter : item.Path,
+                Arguments = isScript ? interpreterArgs : item.Arguments,
                 UseShellExecute = true,
             };
             if (item.RunAsAdmin)
@@ -66,7 +69,8 @@ public static class ScenarioLauncher
             }
 
             var process = Process.Start(startInfo);
-            LoggingService.Log($"Launched '{item.Name}' (pid={process?.Id}, admin={item.RunAsAdmin})");
+            LoggingService.Log(
+                $"Launched '{item.Name}' (pid={process?.Id}, admin={item.RunAsAdmin}): {startInfo.FileName} {startInfo.Arguments}");
             return LaunchResult.Ok();
         }
         catch (Win32Exception wex) when (wex.NativeErrorCode == 1223) // ERROR_CANCELLED - user declined UAC

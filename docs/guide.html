@@ -45,8 +45,8 @@
         <button data-lang="ru">RU</button><button data-lang="en">EN</button><button data-lang="ua">UA</button>
       </div>
       <button class="theme-btn" id="themeBtn" aria-label="Switch theme">◐</button>
-      <a class="btn btn-primary btn-sm" href="https://github.com/SerZhyAle/OneClickRunner/releases">
-        <span data-l="ru">Скачать</span><span data-l="en">Download</span><span data-l="ua">Завантажити</span>
+      <a class="btn btn-primary btn-sm" href="#install">
+        <span data-l="ru">Начать</span><span data-l="en">Get started</span><span data-l="ua">Почати</span>
       </a>
     </div>
   </header>
@@ -86,21 +86,18 @@
         <span class="secnum" aria-hidden="true">01</span>
         <span class="sechead">
           <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Установка</span><span data-l="en">Install</span><span data-l="ua">Встановлення</span></span>
-          <span class="secteaser"><span data-l="ru">Готовый релиз или сборка из исходников — один блок команд.</span><span data-l="en">Prebuilt release or build from source — one command block.</span><span data-l="ua">Готовий реліз або збірка з вихідників — один блок команд.</span></span>
+          <span class="secteaser"><span data-l="ru">Текущий путь — сборка из исходников; команды в одном блоке.</span><span data-l="en">The current path is building from source; commands are in one block.</span><span data-l="ua">Поточний шлях — збирання з вихідного коду; команди в одному блоці.</span></span>
         </span>
       </summary>
       <div class="secbody">
       <ul class="features" data-l="ru">
-        <li><strong>Готовый релиз</strong> — скачайте со <a href="https://github.com/SerZhyAle/OneClickRunner/releases">страницы релизов</a>, распакуйте и запустите <code>OneClickRunner.exe</code>.</li>
-        <li><strong>Сборка из исходников</strong> — нужен .NET 8 SDK (команды ниже).</li>
+        <li><strong>Сборка из исходников</strong> — нужен .NET 8 SDK; команды ниже.</li>
       </ul>
       <ul class="features" data-l="en">
-        <li><strong>Prebuilt release</strong> — download from the <a href="https://github.com/SerZhyAle/OneClickRunner/releases">Releases page</a>, extract and run <code>OneClickRunner.exe</code>.</li>
-        <li><strong>Build from source</strong> — needs the .NET 8 SDK (commands below).</li>
+        <li><strong>Build from source</strong> — needs the .NET 8 SDK; commands are below.</li>
       </ul>
       <ul class="features" data-l="ua">
-        <li><strong>Готовий реліз</strong> — завантажте зі <a href="https://github.com/SerZhyAle/OneClickRunner/releases">сторінки релізів</a>, розпакуйте та запустіть <code>OneClickRunner.exe</code>.</li>
-        <li><strong>Збірка з вихідників</strong> — потрібен .NET 8 SDK (команди нижче).</li>
+        <li><strong>Збірка з вихідників</strong> — потрібен .NET 8 SDK; команди нижче.</li>
       </ul>
       <pre class="code"><span class="tok">git</span> clone https://github.com/SerZhyAle/OneClickRunner.git
 <span class="tok">cd</span> OneClickRunner
@@ -108,9 +105,9 @@
 <span class="tok">dotnet</span> run --project OneClickRunner</pre>
       <div class="note">
         <span class="tag" data-l="ru">Требования</span><span class="tag" data-l="en">Requirements</span><span class="tag" data-l="ua">Вимоги</span>
-        <p data-l="ru">Windows 10 или 11 и среда выполнения .NET 8.0 (сборка framework-dependent).</p>
-        <p data-l="en">Windows 10 or 11 and the .NET 8.0 runtime (framework-dependent build).</p>
-        <p data-l="ua">Windows 10 або 11 та середовище виконання .NET 8.0 (збірка framework-dependent).</p>
+        <p data-l="ru">Windows 10 или 11 и .NET 8 SDK. Опубликованного готового пакета в GitHub Releases сейчас нет.</p>
+        <p data-l="en">Windows 10 or 11 and the .NET 8 SDK. There is currently no published ready-made package in GitHub Releases.</p>
+        <p data-l="ua">Windows 10 або 11 і .NET 8 SDK. Опублікованого готового пакета в GitHub Releases зараз немає.</p>
       </div>
       </div>
     </details>

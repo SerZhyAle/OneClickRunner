@@ -35,7 +35,7 @@ public static class ScenarioIconResolver
                 return File.Exists(path) ? new ScenarioIcon(path, 0) : AppFallback();
 
             case ".ps1":
-                return InterpreterIcon("powershell.exe");
+                return InterpreterIcon(ScriptInterpreter.PowerShellHost());
             case ".bat":
             case ".cmd":
                 return InterpreterIcon("cmd.exe");
@@ -53,12 +53,17 @@ public static class ScenarioIconResolver
         }
     }
 
-    /// <summary>First resolvable interpreter's icon, or the app fallback if none resolve.</summary>
+    /// <summary>
+    /// First resolvable interpreter's icon, or the app fallback if none resolve. A candidate may be
+    /// a bare command to look up on PATH or an already-resolved full path.
+    /// </summary>
     private static ScenarioIcon InterpreterIcon(params string[] candidates)
     {
         foreach (var candidate in candidates)
         {
-            var resolved = ScenarioLauncher.ResolveOnPath(candidate);
+            var resolved = Path.IsPathRooted(candidate)
+                ? (File.Exists(candidate) ? candidate : null)
+                : ScenarioLauncher.ResolveOnPath(candidate);
             if (resolved != null)
             {
                 return new ScenarioIcon(resolved, 0);
