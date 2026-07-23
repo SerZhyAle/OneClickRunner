@@ -7,7 +7,10 @@ taskbar Jump List.
 **[Setup guide](https://serzhyale.github.io/OneClickRunner/guide.html)** ·
 **[Source code](https://github.com/SerZhyAle/OneClickRunner)**
 
-There is currently no published prebuilt release. Build and run from source with the .NET 8 SDK.
+**[Download the latest release](https://github.com/SerZhyAle/OneClickRunner/releases/latest)** —
+grab `OneClickRunner-<version>-win-x64.zip`, unzip, and run `OneClickRunner.exe`. The prebuilt
+is framework-dependent, so the PC needs the **.NET 8 Desktop Runtime**. You can also build and run
+from source with the .NET 8 SDK (below).
 
 Part of the **[SZA](https://sza.od.ua)** family of tools — see also
 [FastMediaSorter](https://serzhyale.github.io/FastMediaSorter_Lite/),
