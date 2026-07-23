@@ -4,7 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-OneClickRunner is a single-project WPF app (.NET 8, `net8.0-windows`, WPF + WinForms enabled) that lets the user launch configured apps/scripts ("scenarios") from the Windows taskbar Jump List. There are no tests.
+OneClickRunner is a single-project WPF app (.NET 8, `net8.0-windows`, WPF + WinForms enabled) that lets the user launch configured apps/scripts ("scenarios") from the Windows taskbar Jump List and a system-tray icon. There are no tests.
+
+## SZA Unified Rules (canon)
+
+This repo follows the **SZA Unified Rules** — the shared source of truth for conventions across every
+SZA project. Consumption model: **reference** (link the canon, don't mirror it). Read the canon for the
+universal rules; this file keeps only OneClickRunner's deltas.
+
+- **Canon:** `P:\WEB\sites.google.comsiteszaodua\Unified_Rules` — start at `NEW_PROJECT_CHECKLIST.md`,
+  then `AI_USAGE.md`, `DEVELOPMENT.md`, `TESTING_AND_QA.md`, `GITHUB_INTERACTION.md`, and the **Overlay A**
+  section of `PLATFORM_OVERLAYS.md`.
+- **This repo's record:** `contrib/oneclickrunner.md` in the canon — overlay facts + every divergence.
+
+**Overlay & shape — Overlay A (Windows desktop), minimal.** Uses Overlay A's source and version shape,
+but **DIVERGES on distribution: no channels at all** — no winget / MSIX / Store / installer, no GitHub
+Release, no `CHANGELOG`/`LICENSE`. "Release" is a local file-copy: `build.ps1` publishes a
+framework-dependent single-file win-x64 exe and copies it to the hardcoded `C:\GD\tc\SZA\_APP`. Single
+edition, single binary; no frozen anchors reserved.
+
+- **Version shape.** Zero-padded date tag `YY.MMdd.HHmm`, stamped at build from `DateTime.Now`
+  (`OneClickRunner/OneClickRunner.csproj`, `ProductVersion`) — a valid Overlay A padding choice.
 
 ## Build & Run
 
@@ -17,34 +37,30 @@ dotnet run --project OneClickRunner # run from source
 
 ## Architecture
 
-The whole app is driven from `App.xaml.cs`; the pieces below only make sense together.
+Startup and command routing live in `App.xaml.cs` (kept thin, ~240 lines); feature logic is in `Services/` (`ScenarioLauncher`, `PipeIpcService`, `JumpListService`, `TrayIconService`, `ThemeService`, `AutostartService`, `ConfigurationService`, `ScriptInterpreter`). Layering is `Windows/App (UI) -> Services -> Models`. The pieces below only make sense together.
 
 **No `StartupUri` — startup is manual.** `App.xaml` deliberately declares no startup window. `App.OnStartup` decides at runtime whether to (a) forward a command to an already-running instance and exit, (b) execute a one-shot command and exit, (c) show the settings window, or (d) start minimized.
 
-**Single-instance + named-pipe IPC.** A named `Mutex` (`OneClickRunner_SingleInstance_Mutex`) enforces one instance. A second launch (e.g. clicking a Jump List task) connects to the live instance over a named pipe (`OneClickRunner_Command_Pipe`), writes its command-line arg, and exits. The live instance runs a background pipe listener (`StartPipeListener`) that marshals the command onto the UI thread. Note `StartPipeServer` is dead/unused code — the active path is `StartPipeListener`.
+**Single-instance + named-pipe IPC.** A named `Mutex` (`OneClickRunner_SingleInstance_Mutex`) enforces one instance. A second launch (e.g. clicking a Jump List task) connects to the live instance over a named pipe (`OneClickRunner_Command_Pipe`), writes its command-line arg, and exits. The live instance's `PipeIpcService` runs the background listener and marshals each command onto the UI thread.
 
 **Command protocol.** Both CLI args and pipe messages use the same strings, routed through `HandleCommandLineArgs`: `/run:{guid}`, `/settings`, `/exit`. `/run:{guid}` looks the scenario up by `AppItem.Id`.
 
-**Jump List is the launcher UI** (not a system tray, despite the README). `BuildJumpList` rebuilds a `JumpTask` per scenario (`Arguments = /run:{id}`) plus Settings and Exit tasks. Call `RefreshJumpList()` after any scenario change — `MainWindow.LoadAppItems` already does this.
+**Two launch surfaces — Jump List and system tray.** Both list the same scenarios in the same order; `JumpListService` builds a `JumpTask` per scenario (`Arguments = /run:{id}`) plus Settings and Exit, and `TrayIconService` builds the equivalent tray menu. After any scenario change call `App.RefreshJumpList()` (delegates to `JumpListService.Rebuild()`) — `MainWindow.LoadAppItems` already does this.
 
 **Scenario storage = one XML file per item.** `ConfigurationService` persists each `AppItem` as a separate `XmlSerializer` file named `{guid}.xml` under `%APPDATA%\OneClickRunner\Scenarios\` (not a single config file). This per-file design is what makes Import (`MainWindow.ImportButton_Click`) work — importing an `.xml` adds one scenario and assigns a fresh `Id`. An empty folder is seeded with a default "Calculator" scenario. State lives on disk, and `App` and `MainWindow` each hold their own `ConfigurationService`, so call `Reload()` to pick up external changes before reading.
 
-**Elevation differs by launch path — a real gotcha.** Launching via Jump List / command line (`App.HandleCommandLineArgs`) **always** starts the process with `Verb = "runas"` (admin prompt). Launching via the in-window Run button (`MainWindow.RunButton_Click`) only elevates when `AppItem.RunAsAdmin` is true. The same scenario can therefore behave differently depending on how it's started.
+**Elevation is unified — decided only by `RunAsAdmin`.** All launches route through `ScenarioLauncher.Launch`, which sets `Verb = "runas"` **iff** `AppItem.RunAsAdmin` is true, regardless of launch surface (Jump List, tray, CLI, or the in-window Run button). This is the T0001 fix — the earlier "Jump List always elevates" gotcha is gone; behaviour no longer depends on how a scenario is started.
 
-**Special `SPECIAL_YTDLP` scenario.** An `AppItem.Path` of the sentinel `"SPECIAL_YTDLP"` is intercepted in `HandleCommandLineArgs`: it shows `LinkInputDialog`, then runs `yt-dlp <link>` in a `cmd /k` window `cd`'d to the user's Downloads folder. Any similar "magic path" special-casing goes in that same method.
+**yt-dlp is a first-class scenario type.** A yt-dlp scenario prompts for the link at run time (`LinkInputDialog`) and runs `yt-dlp` in the chosen output folder. The old magic path `"SPECIAL_YTDLP"` survives only as `ScenarioLauncher.LegacyYtDlpSentinel` for back-compat with pre-existing scenarios; new special-casing belongs in `ScenarioLauncher`, not in a magic `Path`.
 
 **Window lifecycle.** Closing the settings window does not exit — `Window_Closing` cancels and minimizes unless `_isExiting` is set (only the Exit button sets it, after confirmation). Real shutdown is `Application.Current.Shutdown()`.
 
 **Logging.** `LoggingService` (static) appends verbosely to `%APPDATA%\OneClickRunner\activity.log` and swallows its own errors. It's the primary debugging tool since much logic runs in short-lived one-shot process invocations.
 
-## README caveat
+## Working method (repo deltas — universal rules live in the canon `AI_USAGE.md`)
 
-`README.md` is stale: it describes a system tray and a single `config.json`. The implementation actually uses Windows Jump Lists and per-scenario XML files (above). Trust the code.
-
-## Working method (adopted from Universal Agent Kit)
-
-**Communication.** Chat in English; code / comments / logs / commits in English. Dry and
-terse — no filler, no trailing summaries the user can read from the diff.
+**Communication.** Chat in Russian; code / comments / logs / commits in English (canon `AUTHOR.md`
+§Language). Dry and terse — no filler, no trailing summaries the user can read from the diff.
 
 **Autonomy.** Don't ask permission to read, search, build, or run. Flag real blockers up
 front. Fix trivial issues silently; surface only decisions that change behaviour or
@@ -68,13 +84,12 @@ Architecture `Windows/App (UI) -> Services -> Models` — respect the direction;
 points (`App.xaml.cs`, window code-behind) thin, delegate to `Services/`. Build
 `dotnet build -c Release`; run `dotnet run --project OneClickRunner`; no test project.
 
-**Strict rules.** No writes to repo root (scratch/backups → `temp/`). File budget ~500 lines
-(`App.xaml.cs` is the one near it — split `HandleCommandLineArgs`/`BuildJumpList`/pipe
-listener if it grows). Never modify `bin/`, `obj/`, `.vs/`, `*.g.cs`. Follow existing naming.
+**Strict rules.** No writes to repo root (scratch/backups → `temp/`). File budget ~500 lines; the
+largest code-behind is `MainWindow.xaml.cs` (~460) — split it, not into it, if it grows. Never modify
+`bin/`, `obj/`, `.vs/`, `*.g.cs`. Follow existing naming.
 
 **Logging & anti-slop.** Ship logs only through `LoggingService.Log` — no `Console.*` or
-`Debug.WriteLine` on live paths (note: `ConfigurationService` currently uses `Debug.WriteLine`
-— clean up when you touch it). No empty/broad `catch` that only logs, no trivial comments, no
+`Debug.WriteLine` on live paths. No empty/broad `catch` that only logs, no trivial comments, no
 dead code left behind. Full list in doc/CODE_QUALITY.md.
 
 **Post-change discipline.** Record `expected | actual` for every check. A change is done only
