@@ -17,14 +17,19 @@ universal rules; this file keeps only OneClickRunner's deltas.
   section of `PLATFORM_OVERLAYS.md`.
 - **This repo's record:** `contrib/oneclickrunner.md` in the canon — overlay facts + every divergence.
 
-**Overlay & shape — Overlay A (Windows desktop), minimal.** Uses Overlay A's source and version shape,
-but **DIVERGES on distribution: no channels at all** — no winget / MSIX / Store / installer, no GitHub
-Release, no `CHANGELOG`/`LICENSE`. "Release" is a local file-copy: `build.ps1` publishes a
-framework-dependent single-file win-x64 exe and copies it to the hardcoded `C:\GD\tc\SZA\_APP`. Single
-edition, single binary; no frozen anchors reserved.
+**Overlay & shape — Overlay A (Windows desktop), single channel.** Ships through **exactly one**
+distribution channel — **GitHub Release** (portable `OneClickRunner-<version>-win-x64.zip` + `.sha256`,
+framework-dependent, needs the .NET 8 Desktop Runtime). No winget / MSIX / Store / installer, so **no
+frozen anchor to reserve** (a GitHub-Release-only portable has no update-correlation id). Single edition,
+single binary. `LICENSE` (MIT) and `CHANGELOG.md` (house `[Unreleased]` flow) are at root.
 
+- **Build/release wall.** `build.ps1` is **BUILD** — a local convenience that publishes and copies the
+  exe to the hardcoded `C:\GD\tc\SZA\_APP`; it **never tags**. `release.ps1` is **RELEASE** — the only
+  script that creates a `v<version>` tag, builds the zip + sha256, pushes the tag, and runs
+  `gh release create`. Use `-DryRun` to stage artifacts without publishing.
 - **Version shape.** Zero-padded date tag `YY.MMdd.HHmm`, stamped at build from `DateTime.Now`
-  (`OneClickRunner/OneClickRunner.csproj`, `ProductVersion`) — a valid Overlay A padding choice.
+  (`OneClickRunner/OneClickRunner.csproj`, `ProductVersion`; `release.ps1` overrides it with the exact tag
+  so the exe stamp, tag, and zip name all match) — a valid Overlay A padding choice.
 
 ## Build & Run
 
