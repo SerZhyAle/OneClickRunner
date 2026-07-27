@@ -26,12 +26,12 @@
   "site": {
     "kind": "product",
     "root": "docs",
-    "pages": ["index.html", "guide.html"]
+    "pages": ["index.html", "guide.html", "privacy.html"]
   },
 
   "privacy": {
-    "page": null,
-    "carveOut": "zero-data",
+    "page": "docs/privacy.html",
+    "carveOut": null,
     "sensitiveAccess": false
   },
 

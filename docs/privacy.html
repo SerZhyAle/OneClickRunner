@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>One Click Runner - privacy</title>
+  <link rel="canonical" href="https://serzhyale.github.io/OneClickRunner/privacy.html">
+  <meta name="description" content="What One Click Runner stores on your PC, what it never sends anywhere, which Windows settings it touches, and how to remove everything it wrote." />
+  <meta name="theme-color" content="#0a0f0a" />
+  <meta property="og:title" content="One Click Runner - privacy" />
+  <meta property="og:description" content="One Click Runner keeps its scenarios and log on your own PC and makes no network calls of its own. Here is exactly what it writes and where." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/SerZhyAle/OneClickRunner/main/docs/assets/social-preview.png" />
+  <meta property="og:url" content="https://serzhyale.github.io/OneClickRunner/privacy.html" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icon-16.png" />
+  <link rel="icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="assets/icon-256.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "One Click Runner - privacy",
+    "url": "https://serzhyale.github.io/OneClickRunner/privacy.html",
+    "inLanguage": ["en", "ru", "uk"],
+    "description": "What One Click Runner stores on your PC, what it never sends anywhere, which Windows settings it touches, and how to remove everything it wrote.",
+    "isPartOf": { "@type": "WebSite", "name": "One Click Runner", "url": "https://serzhyale.github.io/OneClickRunner/" },
+    "about": {
+      "@type": "SoftwareApplication",
+      "name": "One Click Runner",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Windows 10, Windows 11",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    },
+    "publisher": { "@type": "Person", "name": "Serhii Zhyhunenko", "email": "sza@ukr.net" }
+  }
+  </script>
+
+  <!-- pre-paint: resolve theme + language before the stylesheet, so nothing flashes -->
+  <script>
+  (function(){try{
+    var t=localStorage.getItem('sza-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+    document.documentElement.setAttribute('data-theme',t);
+    var l=localStorage.getItem('sza-lang');
+    if(!l){var n=(navigator.language||'en').toLowerCase();l=n.indexOf('ru')==0?'ru':n.indexOf('uk')==0?'ua':'en';}
+    document.documentElement.setAttribute('data-lang',l);
+  }catch(e){}})();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./" style="text-decoration:none">One&nbsp;Click&nbsp;Runner<span class="dot">.</span></a>
+      <div class="seg" role="group" aria-label="Language">
+        <button data-lang="ru">RU</button><button data-lang="en">EN</button><button data-lang="ua">UA</button>
+      </div>
+      <button class="theme-btn" id="themeBtn" aria-label="Switch theme">◐</button>
+      <a class="btn btn-primary btn-sm" href="#stored">
+        <span data-l="ru">К деталям</span><span data-l="en">Jump to details</span><span data-l="ua">До деталей</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HERO -->
+    <section class="hero" style="padding-bottom:.5rem">
+      <span class="kicker" data-l="ru">Конфиденциальность</span><span class="kicker" data-l="en">Privacy</span><span class="kicker" data-l="ua">Конфіденційність</span>
+      <h1><span data-l="ru">Ваши сценарии остаются на вашем компьютере</span><span data-l="en">Your scenarios stay on your computer</span><span data-l="ua">Ваші сценарії залишаються на вашому комп'ютері</span></h1>
+      <p class="lead">
+        <span data-l="ru">One Click Runner - локальный лаунчер. Он не делает сетевых запросов сам по себе: ни телеметрии, ни аналитики, ни проверки обновлений, ни отправки отчётов о сбоях. Ниже - что именно он пишет на диск, к каким настройкам Windows обращается и как всё это удалить.</span>
+        <span data-l="en">One Click Runner is a local launcher. It makes no network calls of its own: no telemetry, no analytics, no update check, no crash reporting. Below is exactly what it writes to disk, which Windows settings it touches, and how to remove all of it.</span>
+        <span data-l="ua">One Click Runner - локальний лаунчер. Він не робить мережевих запитів сам по собі: ні телеметрії, ні аналітики, ні перевірки оновлень, ні надсилання звітів про збої. Нижче - що саме він пише на диск, до яких налаштувань Windows звертається і як усе це видалити.</span>
+      </p>
+      <p class="lead" style="font-size:.92rem">
+        <span data-l="ru"><strong>Дата вступления в силу:</strong> 27 июля 2026 года. Вопросы и уточнения: <a href="mailto:sza@ukr.net">sza@ukr.net</a> или <a href="https://github.com/SerZhyAle/OneClickRunner/issues" target="_blank" rel="noopener noreferrer">issue на GitHub</a>.</span>
+        <span data-l="en"><strong>Effective date:</strong> 27 July 2026. Questions and corrections: <a href="mailto:sza@ukr.net">sza@ukr.net</a> or <a href="https://github.com/SerZhyAle/OneClickRunner/issues" target="_blank" rel="noopener noreferrer">a GitHub issue</a>.</span>
+        <span data-l="ua"><strong>Дата набрання чинності:</strong> 27 липня 2026 року. Питання й уточнення: <a href="mailto:sza@ukr.net">sza@ukr.net</a> або <a href="https://github.com/SerZhyAle/OneClickRunner/issues" target="_blank" rel="noopener noreferrer">issue на GitHub</a>.</span>
+      </p>
+      <div class="button-group" style="margin-top:1rem">
+        <a class="btn btn-ghost" href="./">
+          <span data-l="ru">← Обзор</span><span data-l="en">← Overview</span><span data-l="ua">← Огляд</span>
+        </a>
+        <a class="btn btn-ghost" href="guide.html">
+          <span data-l="ru">Руководство</span><span data-l="en">Guide</span><span data-l="ua">Посібник</span>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/SerZhyAle/OneClickRunner" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <button class="btn btn-ghost btn-sm" type="button" onclick="setAll(true)">
+        <span data-l="ru">Развернуть все разделы</span><span data-l="en">Expand all sections</span><span data-l="ua">Розгорнути всі розділи</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" type="button" onclick="setAll(false)">
+        <span data-l="ru">Свернуть всё</span><span data-l="en">Collapse all</span><span data-l="ua">Згорнути все</span>
+      </button>
+    </div>
+
+    <div class="sections">
+
+    <!-- 1. WHAT IS STORED -->
+    <details class="sec" id="stored" open>
+      <summary>
+        <span class="secnum" aria-hidden="true">01</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Что хранится на вашем компьютере</span><span data-l="en">What is stored on your computer</span><span data-l="ua">Що зберігається на вашому комп'ютері</span></span>
+          <span class="secteaser"><span data-l="ru">Три обычных файла в вашем профиле пользователя. Без базы данных и облачной синхронизации.</span><span data-l="en">Three plain files inside your own user profile. No database, no cloud sync.</span><span data-l="ua">Три звичайні файли у вашому профілі користувача. Без бази даних і хмарної синхронізації.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
+      <ul class="features" data-l="ru">
+        <li><strong><code>%APPDATA%\OneClickRunner\Scenarios\</code></strong> - по одному XML-файлу на сценарий. В нём то, что вы ввели в окне настроек: имя, путь, аргументы, рабочая папка, флаг «Run as Administrator», порядок в списке, тип сценария и - для yt-dlp - папка загрузки и дополнительные опции.</li>
+        <li><strong><code>%APPDATA%\OneClickRunner\activity.log</code></strong> - текстовый журнал с отметками времени: какой сценарий запущен, собранная командная строка вместе с аргументами, ссылка, введённая для yt-dlp, путь файла при экспорте и тексты ошибок. Приложение только дописывает журнал и не подрезает его.</li>
+        <li><strong><code>%APPDATA%\OneClickRunner\.initialized</code></strong> - метка первого запуска (одна отметка времени), чтобы пример сценария «Calculator» не появлялся снова.</li>
+      </ul>
+      <ul class="features" data-l="en">
+        <li><strong><code>%APPDATA%\OneClickRunner\Scenarios\</code></strong> - one XML file per scenario. It holds what you typed into the Settings window: name, path, arguments, working folder, the "Run as Administrator" flag, the position in the list, the scenario type, and - for yt-dlp - the download folder and extra options.</li>
+        <li><strong><code>%APPDATA%\OneClickRunner\activity.log</code></strong> - a timestamped text log: which scenario was launched, the assembled command line including its arguments, the link you typed for a yt-dlp scenario, the destination path of an export, and error text. The app only appends to it and never trims it.</li>
+        <li><strong><code>%APPDATA%\OneClickRunner\.initialized</code></strong> - a first-run marker (a single timestamp) so the sample "Calculator" scenario is not seeded again.</li>
+      </ul>
+      <ul class="features" data-l="ua">
+        <li><strong><code>%APPDATA%\OneClickRunner\Scenarios\</code></strong> - по одному XML-файлу на сценарій. У ньому те, що ви ввели у вікні налаштувань: ім'я, шлях, аргументи, робоча тека, прапорець «Run as Administrator», порядок у списку, тип сценарію і - для yt-dlp - тека завантаження та додаткові опції.</li>
+        <li><strong><code>%APPDATA%\OneClickRunner\activity.log</code></strong> - текстовий журнал з відмітками часу: який сценарій запущено, зібраний командний рядок разом з аргументами, посилання, введене для yt-dlp, шлях файлу під час експорту та тексти помилок. Застосунок лише дописує журнал і не підрізає його.</li>
+        <li><strong><code>%APPDATA%\OneClickRunner\.initialized</code></strong> - позначка першого запуску (одна відмітка часу), щоб приклад сценарію «Calculator» не з'являвся знову.</li>
+      </ul>
+      <div class="note">
+        <span class="tag" data-l="ru">Важно</span><span class="tag" data-l="en">Important</span><span class="tag" data-l="ua">Важливо</span>
+        <p data-l="ru">Всё это - обычные файлы в вашем профиле пользователя, доступные вам и любому, кто работает под вашей учётной записью. Приложение их не шифрует и никуда не копирует.</p>
+        <p data-l="en">These are plain files inside your own user profile, readable by you and by anyone working under your account. The app does not encrypt them and does not copy them anywhere.</p>
+        <p data-l="ua">Усе це - звичайні файли у вашому профілі користувача, доступні вам і будь-кому, хто працює під вашим обліковим записом. Застосунок їх не шифрує і нікуди не копіює.</p>
+      </div>
+      </div>
+    </details>
+
+    <!-- 2. NETWORK -->
+    <details class="sec" id="network" open>
+      <summary>
+        <span class="secnum" aria-hidden="true">02</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Что уходит с компьютера</span><span data-l="en">What leaves your computer</span><span data-l="ua">Що йде з комп'ютера</span></span>
+          <span class="secteaser"><span data-l="ru">Из самого приложения - ничего. Сеть используют программы, которые вы запускаете.</span><span data-l="en">From the app itself, nothing. The network is used by the programs you launch.</span><span data-l="ua">Із самого застосунку - нічого. Мережу використовують програми, які ви запускаєте.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
+      <ul class="features" data-l="ru">
+        <li><strong>Нет телеметрии и аналитики.</strong> Приложение не собирает статистику использования и не отправляет её ни на какой сервер.</li>
+        <li><strong>Нет проверки обновлений.</strong> Версия читается из атрибута собственной сборки; приложение никуда не обращается, чтобы узнать, вышла ли новая.</li>
+        <li><strong>Нет отчётов о сбоях.</strong> Ошибки попадают только в локальный <code>activity.log</code>.</li>
+        <li><strong>Нет учётных записей.</strong> Регистрация, вход и синхронизация отсутствуют как функция.</li>
+        <li><strong>Именованный канал - локальный.</strong> Второй запуск передаёт команду уже работающей копии через именованный канал Windows на этом же компьютере. Он не выходит за пределы машины.</li>
+      </ul>
+      <ul class="features" data-l="en">
+        <li><strong>No telemetry, no analytics.</strong> The app collects no usage statistics and sends none to any server.</li>
+        <li><strong>No update check.</strong> The version is read from the app's own build attribute; nothing is contacted to find out whether a newer one exists.</li>
+        <li><strong>No crash reporting.</strong> Errors go only into the local <code>activity.log</code>.</li>
+        <li><strong>No accounts.</strong> There is no sign-up, sign-in, or sync feature at all.</li>
+        <li><strong>The named pipe is local.</strong> A second launch hands its command to the already-running copy through a Windows named pipe on this same machine. It never leaves the computer.</li>
+      </ul>
+      <ul class="features" data-l="ua">
+        <li><strong>Немає телеметрії та аналітики.</strong> Застосунок не збирає статистику використання і не надсилає її на жоден сервер.</li>
+        <li><strong>Немає перевірки оновлень.</strong> Версія читається з атрибута власної збірки; застосунок нікуди не звертається, щоб дізнатися про новішу.</li>
+        <li><strong>Немає звітів про збої.</strong> Помилки потрапляють лише до локального <code>activity.log</code>.</li>
+        <li><strong>Немає облікових записів.</strong> Реєстрації, входу та синхронізації немає як функції.</li>
+        <li><strong>Іменований канал - локальний.</strong> Другий запуск передає команду вже запущеній копії через іменований канал Windows на цьому ж комп'ютері. Він не виходить за межі машини.</li>
+      </ul>
+      <div class="note">
+        <span class="tag" data-l="ru">Что делает сеть</span><span class="tag" data-l="en">What does use the network</span><span class="tag" data-l="ua">Що використовує мережу</span>
+        <p data-l="ru">Сценарий запускает выбранную вами программу, и её поведение в сети - её собственное. Сценарий с адресом <code>http(s)</code> открывает ваш браузер. Сценарий yt-dlp запускает установленный вами <code>yt-dlp</code> в видимом окне консоли, и уже он скачивает по введённой ссылке. One Click Runner не скачивает ничего сам и не поставляет yt-dlp в комплекте.</p>
+        <p data-l="en">A scenario starts a program you chose, and that program's network behaviour is its own. A scenario pointing at an <code>http(s)</code> address opens your browser. A yt-dlp scenario starts the <code>yt-dlp</code> you installed, in a visible console window, and that program does the downloading from the link you typed. One Click Runner downloads nothing itself and does not bundle yt-dlp.</p>
+        <p data-l="ua">Сценарій запускає обрану вами програму, і її поведінка в мережі - її власна. Сценарій з адресою <code>http(s)</code> відкриває ваш браузер. Сценарій yt-dlp запускає встановлений вами <code>yt-dlp</code> у видимому вікні консолі, і вже він завантажує за введеним посиланням. One Click Runner нічого не завантажує сам і не постачає yt-dlp у комплекті.</p>
+      </div>
+      </div>
+    </details>
+
+    <!-- 3. SECRETS -->
+    <details class="sec" id="secrets">
+      <summary>
+        <span class="secnum" aria-hidden="true">03</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Пароли и ключи: чего не стоит вводить</span><span data-l="en">Passwords and keys: what not to type in</span><span data-l="ua">Паролі та ключі: чого не варто вводити</span></span>
+          <span class="secteaser"><span data-l="ru">Хранилища секретов нет. Поле Arguments сохраняется как есть - и попадает в журнал.</span><span data-l="en">There is no secret store. The Arguments field is saved verbatim, and it reaches the log.</span><span data-l="ua">Сховища секретів немає. Поле Arguments зберігається як є - і потрапляє до журналу.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
+      <p data-l="ru">Приложение не запрашивает и не хранит пароли, токены и ключи: у него нет учётных записей и нет собственного хранилища секретов. Ничего не шифруется, потому что нет данных, которые приложение считало бы секретом.</p>
+      <p data-l="en">The app never asks for and never stores a password, token, or key: it has no accounts and no secret store of its own. Nothing is encrypted, because there is nothing the app treats as a secret.</p>
+      <p data-l="ua">Застосунок не запитує і не зберігає паролі, токени та ключі: у нього немає облікових записів і немає власного сховища секретів. Нічого не шифрується, бо немає даних, які застосунок вважав би секретом.</p>
+      <div class="note">
+        <span class="tag" data-l="ru">Внимание</span><span class="tag" data-l="en">Caution</span><span class="tag" data-l="ua">Увага</span>
+        <p data-l="ru">Всё, что вы напишете в поле <strong>Arguments</strong>, сохраняется в XML-файле сценария открытым текстом и при каждом запуске дописывается в <code>activity.log</code>. Пароль или API-ключ, введённый туда, окажется в двух обычных файлах. Передавайте секреты через переменные окружения или менеджер учётных данных внутри собственного скрипта, а не через это поле. То же касается ссылки для yt-dlp: она пишется в журнал.</p>
+        <p data-l="en">Anything you put in the <strong>Arguments</strong> field is saved to the scenario's XML file in plain text and appended to <code>activity.log</code> on every launch. A password or API key typed there ends up in two plain files. Pass secrets through environment variables or a credential helper inside your own script instead of this field. The same applies to a yt-dlp link: it is written to the log.</p>
+        <p data-l="ua">Усе, що ви напишете в полі <strong>Arguments</strong>, зберігається у XML-файлі сценарію відкритим текстом і під час кожного запуску дописується до <code>activity.log</code>. Пароль або API-ключ, введений туди, опиниться у двох звичайних файлах. Передавайте секрети через змінні середовища або менеджер облікових даних усередині власного скрипта, а не через це поле. Те саме стосується посилання для yt-dlp: воно пишеться в журнал.</p>
+      </div>
+      </div>
+    </details>
+
+    <!-- 4. WINDOWS SETTINGS -->
+    <details class="sec" id="windows">
+      <summary>
+        <span class="secnum" aria-hidden="true">04</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">К каким настройкам Windows обращается приложение</span><span data-l="en">Which Windows settings the app touches</span><span data-l="ua">До яких налаштувань Windows звертається застосунок</span></span>
+          <span class="secteaser"><span data-l="ru">Одно значение в реестре по вашему выбору, одно читается, плюс список переходов.</span><span data-l="en">One registry value you opt into, one it reads, plus the Jump List.</span><span data-l="ua">Одне значення в реєстрі за вашим вибором, одне читається, плюс список переходів.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
+      <ul class="features" data-l="ru">
+        <li><strong>Автозапуск (запись).</strong> Галочка «Start OneClickRunner when Windows starts» создаёт значение <code>OneClickRunner</code> в <code>HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code>; в нём только путь к исполняемому файлу. Снятие галочки это значение удаляет. Без вашего действия оно не появляется.</li>
+        <li><strong>Тема оформления (чтение).</strong> Приложение читает <code>AppsUseLightTheme</code> в <code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize</code>, чтобы следовать светлой или тёмной теме Windows. Только чтение.</li>
+        <li><strong>Список переходов и меню трея.</strong> Имена сценариев передаются Windows, чтобы нарисовать список переходов на панели задач. Windows хранит свою копию этого списка - иначе он не работал бы, когда приложение закрыто.</li>
+        <li><strong>Диалоги файлов.</strong> Импорт и экспорт открывают стандартные диалоги Windows; приложение читает и пишет только тот файл, который вы в них выбрали.</li>
+      </ul>
+      <ul class="features" data-l="en">
+        <li><strong>Autostart (write).</strong> The "Start OneClickRunner when Windows starts" checkbox creates a <code>OneClickRunner</code> value under <code>HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code>, holding only the path to the executable. Clearing the checkbox removes it. It never appears without your action.</li>
+        <li><strong>Theme (read).</strong> The app reads <code>AppsUseLightTheme</code> under <code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize</code> so it can follow the Windows light or dark setting. Read only.</li>
+        <li><strong>Jump List and tray menu.</strong> Scenario names are handed to Windows so it can draw the taskbar Jump List. Windows keeps its own copy of that list - otherwise it could not work while the app is closed.</li>
+        <li><strong>File dialogs.</strong> Import and export open the standard Windows dialogs; the app reads and writes only the file you picked in them.</li>
+      </ul>
+      <ul class="features" data-l="ua">
+        <li><strong>Автозапуск (запис).</strong> Позначка «Start OneClickRunner when Windows starts» створює значення <code>OneClickRunner</code> у <code>HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code>; у ньому лише шлях до виконуваного файлу. Знята позначка це значення видаляє. Без вашої дії воно не з'являється.</li>
+        <li><strong>Тема оформлення (читання).</strong> Застосунок читає <code>AppsUseLightTheme</code> у <code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize</code>, щоб дотримуватись світлої або темної теми Windows. Лише читання.</li>
+        <li><strong>Список переходів і меню трея.</strong> Імена сценаріїв передаються Windows, щоб намалювати список переходів на панелі завдань. Windows зберігає свою копію цього списку - інакше він не працював би, коли застосунок закрито.</li>
+        <li><strong>Діалоги файлів.</strong> Імпорт і експорт відкривають стандартні діалоги Windows; застосунок читає й пише лише той файл, який ви в них обрали.</li>
+      </ul>
+      </div>
+    </details>
+
+    <!-- 5. ELEVATION -->
+    <details class="sec" id="elevation">
+      <summary>
+        <span class="secnum" aria-hidden="true">05</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Права администратора</span><span data-l="en">Administrator rights</span><span data-l="ua">Права адміністратора</span></span>
+          <span class="secteaser"><span data-l="ru">Само приложение работает с обычными правами. Повышение - только для отмеченного сценария.</span><span data-l="en">The app itself runs with your normal rights. Elevation happens only for a scenario you ticked.</span><span data-l="ua">Сам застосунок працює зі звичайними правами. Підвищення - лише для позначеного сценарію.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
+      <p data-l="ru">One Click Runner запускается с вашими обычными правами пользователя и не просит повышения для себя. Отдельный сценарий стартует с повышенными правами только тогда, когда именно у него включена галочка <strong>Run as Administrator</strong>; решение о выдаче прав принимает Windows и показывает вам запрос UAC. Отказ от запроса просто отменяет запуск.</p>
+      <p data-l="en">One Click Runner starts with your normal user rights and never asks for elevation for itself. An individual scenario starts elevated only when that scenario's <strong>Run as Administrator</strong> checkbox is ticked; Windows makes the decision and shows you the UAC prompt. Declining the prompt simply cancels the launch.</p>
+      <p data-l="ua">One Click Runner запускається з вашими звичайними правами користувача і не просить підвищення для себе. Окремий сценарій стартує з підвищеними правами лише тоді, коли саме в нього увімкнено позначку <strong>Run as Administrator</strong>; рішення ухвалює Windows і показує вам запит UAC. Відмова від запиту просто скасовує запуск.</p>
+      <p data-l="ru">Правило одинаково для всех способов запуска - из списка переходов, из меню в трее, из окна настроек и из командной строки.</p>
+      <p data-l="en">The rule is the same for every launch surface - the Jump List, the tray menu, the Settings window, and the command line.</p>
+      <p data-l="ua">Правило однакове для всіх способів запуску - зі списку переходів, з меню в треї, з вікна налаштувань і з командного рядка.</p>
+      </div>
+    </details>
+
+    <!-- 6. REMOVING DATA -->
+    <details class="sec" id="removal">
+      <summary>
+        <span class="secnum" aria-hidden="true">06</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Как удалить всё, что записало приложение</span><span data-l="en">How to remove everything the app wrote</span><span data-l="ua">Як видалити все, що записав застосунок</span></span>
+          <span class="secteaser"><span data-l="ru">Одна папка и одно значение в реестре. Ничего не остаётся вне вашего профиля.</span><span data-l="en">One folder and one registry value. Nothing survives outside your profile.</span><span data-l="ua">Одна тека й одне значення в реєстрі. Нічого не залишається поза вашим профілем.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
+      <ol class="steps" data-l="ru">
+        <li>Снимите галочку «Start OneClickRunner when Windows starts» в настройках - это удалит значение в реестре. Если приложение уже удалено, удалите значение <code>OneClickRunner</code> в ключе <code>HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code> вручную.</li>
+        <li>Удалите папку <code>%APPDATA%\OneClickRunner</code> - вместе с ней уйдут все сценарии, журнал и метка первого запуска.</li>
+        <li>Удалите распакованную папку приложения. Установщика нет, программа поставляется переносимым архивом.</li>
+      </ol>
+      <ol class="steps" data-l="en">
+        <li>Clear the "Start OneClickRunner when Windows starts" checkbox in Settings - that removes the registry value. If the app is already gone, delete the <code>OneClickRunner</code> value under the <code>HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code> key by hand.</li>
+        <li>Delete the <code>%APPDATA%\OneClickRunner</code> folder - every scenario, the log, and the first-run marker go with it.</li>
+        <li>Delete the unpacked app folder. There is no installer; the program ships as a portable archive.</li>
+      </ol>
+      <ol class="steps" data-l="ua">
+        <li>Зніміть позначку «Start OneClickRunner when Windows starts» у налаштуваннях - це видалить значення в реєстрі. Якщо застосунок уже видалено, видаліть значення <code>OneClickRunner</code> у ключі <code>HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code> вручну.</li>
+        <li>Видаліть теку <code>%APPDATA%\OneClickRunner</code> - разом з нею зникнуть усі сценарії, журнал і позначка першого запуску.</li>
+        <li>Видаліть розпаковану теку застосунку. Інсталятора немає, програма постачається переносним архівом.</li>
+      </ol>
+      </div>
+    </details>
+
+    <!-- 7. THIS WEBSITE -->
+    <details class="sec" id="website">
+      <summary>
+        <span class="secnum" aria-hidden="true">07</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Этот сайт</span><span data-l="en">This website</span><span data-l="ua">Цей сайт</span></span>
+          <span class="secteaser"><span data-l="ru">Без счётчиков и cookie. Хостинг GitHub Pages и шрифты Google - сторонние запросы.</span><span data-l="en">No trackers, no cookies. GitHub Pages hosting and Google Fonts are third-party requests.</span><span data-l="ua">Без лічильників і cookie. Хостинг GitHub Pages і шрифти Google - сторонні запити.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
+      <ul class="features" data-l="ru">
+        <li><strong>Хостинг - GitHub Pages.</strong> Страницы отдаёт GitHub, и он ведёт собственные журналы запросов; к ним применяется политика конфиденциальности GitHub.</li>
+        <li><strong>Шрифты - Google Fonts.</strong> Оформление подгружает шрифты с <code>fonts.googleapis.com</code> и <code>fonts.gstatic.com</code>, поэтому браузер обращается к этим адресам при открытии страницы.</li>
+        <li><strong>Ни счётчиков, ни cookie.</strong> На страницах нет систем аналитики, рекламных скриптов и cookie.</li>
+        <li><strong>Выбор темы и языка</strong> сохраняется в <code>localStorage</code> вашего браузера и никуда не отправляется.</li>
+      </ul>
+      <ul class="features" data-l="en">
+        <li><strong>Hosting is GitHub Pages.</strong> GitHub serves the pages and keeps its own request logs; GitHub's privacy policy applies to those.</li>
+        <li><strong>Fonts come from Google Fonts.</strong> The styling loads fonts from <code>fonts.googleapis.com</code> and <code>fonts.gstatic.com</code>, so your browser contacts those addresses when the page opens.</li>
+        <li><strong>No trackers, no cookies.</strong> The pages carry no analytics, no ad scripts, and no cookies.</li>
+        <li><strong>Your theme and language choice</strong> is kept in your browser's <code>localStorage</code> and is never sent anywhere.</li>
+      </ul>
+      <ul class="features" data-l="ua">
+        <li><strong>Хостинг - GitHub Pages.</strong> Сторінки віддає GitHub, і він веде власні журнали запитів; до них застосовується політика конфіденційності GitHub.</li>
+        <li><strong>Шрифти - Google Fonts.</strong> Оформлення підвантажує шрифти з <code>fonts.googleapis.com</code> та <code>fonts.gstatic.com</code>, тому браузер звертається до цих адрес під час відкриття сторінки.</li>
+        <li><strong>Ні лічильників, ні cookie.</strong> На сторінках немає систем аналітики, рекламних скриптів і cookie.</li>
+        <li><strong>Вибір теми та мови</strong> зберігається в <code>localStorage</code> вашого браузера і нікуди не надсилається.</li>
+      </ul>
+      </div>
+    </details>
+
+    <!-- 8. CONTACT & CHANGES -->
+    <details class="sec" id="contact">
+      <summary>
+        <span class="secnum" aria-hidden="true">08</span>
+        <span class="sechead">
+          <span class="sectitle" role="heading" aria-level="2"><span data-l="ru">Связь, проверка и изменения</span><span data-l="en">Contact, verification, and changes</span><span data-l="ua">Зв'язок, перевірка та зміни</span></span>
+          <span class="secteaser"><span data-l="ru">Исходный код открыт - всё сказанное выше можно проверить самому.</span><span data-l="en">The source is open, so every claim above can be checked yourself.</span><span data-l="ua">Вихідний код відкритий - усе сказане вище можна перевірити самому.</span></span>
+        </span>
+      </summary>
+      <div class="secbody">
+      <p data-l="ru">Автор и ответственный за эту страницу - Serhii Zhyhunenko. Напишите на <a href="mailto:sza@ukr.net">sza@ukr.net</a> или откройте <a href="https://github.com/SerZhyAle/OneClickRunner/issues" target="_blank" rel="noopener noreferrer">issue в репозитории</a>, если что-то здесь неточно или требует пояснения.</p>
+      <p data-l="en">The author and the person responsible for this page is Serhii Zhyhunenko. Write to <a href="mailto:sza@ukr.net">sza@ukr.net</a> or open <a href="https://github.com/SerZhyAle/OneClickRunner/issues" target="_blank" rel="noopener noreferrer">an issue in the repository</a> if anything here is inaccurate or needs explaining.</p>
+      <p data-l="ua">Автор і відповідальний за цю сторінку - Serhii Zhyhunenko. Напишіть на <a href="mailto:sza@ukr.net">sza@ukr.net</a> або відкрийте <a href="https://github.com/SerZhyAle/OneClickRunner/issues" target="_blank" rel="noopener noreferrer">issue в репозиторії</a>, якщо щось тут неточне або потребує пояснення.</p>
+      <p data-l="ru">Проект распространяется под лицензией MIT, и <a href="https://github.com/SerZhyAle/OneClickRunner" target="_blank" rel="noopener noreferrer">весь исходный код открыт</a>: утверждения об отсутствии сети и телеметрии можно проверить прямо в нём.</p>
+      <p data-l="en">The project is MIT-licensed and <a href="https://github.com/SerZhyAle/OneClickRunner" target="_blank" rel="noopener noreferrer">the whole source is public</a>: the claims about no network and no telemetry can be checked in it directly.</p>
+      <p data-l="ua">Проєкт поширюється за ліцензією MIT, і <a href="https://github.com/SerZhyAle/OneClickRunner" target="_blank" rel="noopener noreferrer">весь вихідний код відкритий</a>: твердження про відсутність мережі й телеметрії можна перевірити просто в ньому.</p>
+      <p data-l="ru">Если эта страница изменится, новая редакция публикуется здесь же, и дата вступления в силу вверху обновляется вместе с ней.</p>
+      <p data-l="en">If this page changes, the new version is published here and the effective date at the top changes with it.</p>
+      <p data-l="ua">Якщо ця сторінка зміниться, нова редакція публікується тут само, і дата набрання чинності вгорі оновлюється разом з нею.</p>
+      </div>
+    </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="tools-grid">
+        <a href="https://serzhyale.github.io/FastMediaSorter_mob_v2/"><b>FastMediaSorter v2</b><span>Android media sorter</span></a>
+        <a href="https://serzhyale.github.io/FastMediaSorter_Lite/"><b>FastMediaSorter LITE</b><span>Windows media sorter</span></a>
+        <a href="https://serzhyale.github.io/CyrFlip/"><b>CyrFlip</b><span>Fix wrong-layout typing</span></a>
+        <a href="https://serzhyale.github.io/doc-html-translate/"><b>doc-html-translate</b><span>Windows ebook converter</span></a>
+        <a href="https://serzhyale.github.io/FileDO/"><b>FileDO</b><span>Windows storage CLI</span></a>
+        <a href="https://serzhyale.github.io/universal-agent-kit/"><b>Universal Agent Kit</b><span>AI-dev methodology</span></a>
+        <a href="https://sza.od.ua"><b>SZA</b><span>Portfolio hub</span></a>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Serhii Zhyhunenko · MIT</span>
+        <span><a href="https://sza.od.ua">sza.od.ua</a> · <a href="https://github.com/SerZhyAle/OneClickRunner">GitHub</a> · <a href="privacy.html">Privacy</a> · <a href="mailto:sza@ukr.net">sza@ukr.net</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <button class="to-top" id="toTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+  <script>
+  (function(){
+    var doc=document.documentElement;
+    var META={
+      ru:{title:"One Click Runner - конфиденциальность",desc:"Что One Click Runner хранит на вашем ПК, что никуда не отправляет, к каким настройкам Windows обращается и как удалить всё записанное."},
+      en:{title:"One Click Runner - privacy",desc:"What One Click Runner stores on your PC, what it never sends anywhere, which Windows settings it touches, and how to remove everything it wrote."},
+      ua:{title:"One Click Runner - конфіденційність",desc:"Що One Click Runner зберігає на вашому ПК, що нікуди не надсилає, до яких налаштувань Windows звертається і як видалити все записане."}
+    };
+    var descEl=document.querySelector('meta[name="description"]');
+    function setLang(l){
+      doc.setAttribute('data-lang',l);
+      doc.setAttribute('lang', l==='ua'?'uk':l);
+      try{localStorage.setItem('sza-lang',l);}catch(e){}
+      var m=META[l]||META.en;
+      document.title=m.title;
+      if(descEl)descEl.setAttribute('content',m.desc);
+      document.querySelectorAll('.seg button[data-lang]').forEach(function(b){
+        b.setAttribute('aria-pressed', b.getAttribute('data-lang')===l?'true':'false');
+      });
+    }
+    document.querySelectorAll('.seg button[data-lang]').forEach(function(b){
+      b.addEventListener('click',function(){setLang(b.getAttribute('data-lang'));});
+    });
+    setLang(doc.getAttribute('data-lang')||'en');
+
+    var themeBtn=document.getElementById('themeBtn');
+    var themeColor=document.querySelector('meta[name="theme-color"]');
+    function applyThemeMeta(){
+      var dark=doc.getAttribute('data-theme')!=='light';
+      if(themeColor)themeColor.setAttribute('content',dark?'#0a0f0a':'#eef3ea');
+      themeBtn.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme');
+    }
+    themeBtn.addEventListener('click',function(){
+      var next=doc.getAttribute('data-theme')==='light'?'dark':'light';
+      doc.setAttribute('data-theme',next);
+      try{localStorage.setItem('sza-theme',next);}catch(e){}
+      applyThemeMeta();
+    });
+    applyThemeMeta();
+
+    var toTop=document.getElementById('toTop');
+    addEventListener('scroll',function(){toTop.classList.toggle('show',scrollY>500);},{passive:true});
+
+    /* ---- expand/collapse-all for the numbered sections ---- */
+    window.setAll=function(open){
+      document.querySelectorAll('details.sec').forEach(function(d){
+        if(open)d.setAttribute('open','');else d.removeAttribute('open');
+      });
+    };
+    if(location.hash){
+      var target=document.getElementById(location.hash.slice(1));
+      var sec=target&&target.closest?target.closest('details.sec'):null;
+      if(sec)sec.setAttribute('open','');
+    }
+  })();
+  </script>
+</body>
+</html>
