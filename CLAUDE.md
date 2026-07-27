@@ -12,7 +12,8 @@ This repo follows the **SZA Unified Rules** - the shared source of truth for con
 SZA project. Consumption model: **reference** (link the canon, don't mirror it). Read the canon for the
 universal rules; this file keeps only OneClickRunner's deltas.
 
-- **Canon:** `P:\WEB\sites.google.comsiteszaodua\Unified_Rules` - start at `NEW_PROJECT_CHECKLIST.md`,
+- **Canon:** the `sza` Claude Code plugin, from `github.com/SerZhyAle/sza-unified-rules` (adoption stamped
+  in `.sza-canon.json`) - start at `rules/NEW_PROJECT_CHECKLIST.md`,
   then `AI_USAGE.md`, `DEVELOPMENT.md`, `TESTING_AND_QA.md`, `GITHUB_INTERACTION.md`, and the **Overlay A**
   section of `PLATFORM_OVERLAYS.md`.
 - **This repo's record:** `contrib/oneclickrunner.md` in the canon - overlay facts + every divergence.
