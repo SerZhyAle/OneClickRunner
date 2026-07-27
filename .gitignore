@@ -93,3 +93,11 @@ artifacts/
 /temp/
 
 .temp/
+# Secrets and signing material - pre-empt the leak, never catch it afterwards.
+*.pfx
+*.snk
+*.jks
+*.keystore
+.env
+*token*
+*secret*
